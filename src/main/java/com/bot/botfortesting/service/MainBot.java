@@ -69,7 +69,7 @@ public class MainBot extends TelegramLongPollingBot{
 
     private void StartBot(long chatId) {
 
-        Student student=new Student("svp.20@uni-dubna.ru","11223344");
+        Student student=new Student("eaa.20@uni-dubna.ru","11223344");
         studentRepository.save(student);
 
         for(long i=1;i<studentRepository.count()+1;i++)
