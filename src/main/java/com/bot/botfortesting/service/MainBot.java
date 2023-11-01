@@ -2,7 +2,9 @@ package com.bot.botfortesting.service;
 
 
 import com.bot.botfortesting.config.BotConfig;
-import com.bot.botfortesting.supportclasses.Student;
+import com.bot.botfortesting.model.Student;
+import com.bot.botfortesting.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -27,6 +29,8 @@ public class MainBot extends TelegramLongPollingBot{
 
     final BotConfig config;
 
+    @Autowired
+    private StudentRepository studentRepository;
 
     public MainBot(BotConfig config){
 
@@ -64,11 +68,16 @@ public class MainBot extends TelegramLongPollingBot{
     }
 
     private void StartBot(long chatId) {
-        CRUDUtils.runInitScript();
-        Student student=new Student("eaa.20@uni-dubna.ru","12345678");
-        List<Student> students=CRUDUtils.getStudentData();
-        CRUDUtils.saveStudentData(student);
-        System.out.println(CRUDUtils.getStudentData());
+
+        Student student=new Student("svp.20@uni-dubna.ru","11223344");
+        studentRepository.save(student);
+
+        for(long i=1;i<studentRepository.count()+1;i++)
+        {
+            if(studentRepository.findById(i).isPresent())
+                System.out.println(i+"  "+studentRepository.findById(i).get().getName());
+        }
+
         nullKeyboard();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
