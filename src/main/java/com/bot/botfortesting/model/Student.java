@@ -23,10 +23,14 @@ public class Student {
     @Column(name = "studentpass")
     private String pass;
 
-    public Student(String name, String pass) {
+    @Column(name="chat_id")
+    private long chatId;
+
+    public Student(String name, String pass,long chatId) {
 
         this.name = name;
         this.pass = pass;
+        this.chatId=chatId;
     }
 
 }

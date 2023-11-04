@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS alldata.questions (
 CREATE TABLE IF NOT EXISTS alldata.students (
     id BIGSERIAL PRIMARY KEY,
     studentname TEXT,
-    studentpass TEXT
+    studentpass TEXT,
+    chat_id BIGINT
 );
