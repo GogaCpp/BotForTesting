@@ -50,6 +50,7 @@ public class MainBot extends TelegramLongPollingBot{
             log.error("Error set command : "+e.getMessage());
 
         }
+
     }
     @Override
     public String getBotUsername() {
@@ -68,7 +69,7 @@ public class MainBot extends TelegramLongPollingBot{
             switch (messageText) {
                 case "/start" -> startBot(chatId);
                 case "/test" -> testing(chatId);
-                default -> lookstatus(chatId,messageText);
+                default -> lookStatus(chatId,messageText);
             }
         }
         else if(update.hasCallbackQuery()){
@@ -98,7 +99,8 @@ public class MainBot extends TelegramLongPollingBot{
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error send massage :"+ e.getMessage());
+
         }
     }
     private void simpleSend(long chatId,String text){
@@ -115,14 +117,12 @@ public class MainBot extends TelegramLongPollingBot{
 //        Student student2=new Student("eеу.20@uni-dubna.ru","1413");
 //        studentRepository.save(student2);
 
-
-
         List<Student> students=studentRepository.findAll();
         for (Student st:students) {
-                System.out.println(st.getId()+" "+st.getName());
+
             if(st.getChatId()==chatId)
             {
-                System.out.println("---------");
+                log.info("Login by Telegram Id");
 
                 simpleSend(chatId,"Вы авторизовались, как "+st.getName());
                 return;
@@ -176,17 +176,13 @@ public class MainBot extends TelegramLongPollingBot{
         sendMsg(sendMessage);
 
     }
-    private void lookstatus(long chatId,String messegeText) {
+    private void lookStatus(long chatId,String messegeText) {
         switch (operationStatus){
-            case Authorized -> {
-                return;
-            }
-
             case TakeNameAut -> {
                 currentName=messegeText;
                 simpleSend(chatId,"Введите пароль");
                 operationStatus=OperationStatus.TakePassAut;
-                return;
+
             }
             case TakePassAut -> {
                 currentPass=messegeText;
@@ -202,7 +198,7 @@ public class MainBot extends TelegramLongPollingBot{
 
                 simpleSend(chatId,"Неверный логин или пароль");
                 operationStatus=OperationStatus.NoAuthorized;
-                return;
+
             }
             case TakeNameReg -> {
                 currentName=messegeText;
@@ -225,9 +221,8 @@ public class MainBot extends TelegramLongPollingBot{
                 simpleSend(chatId,"Вы успешно зарегистрировались");
                 operationStatus=OperationStatus.Authorized;
             }
-            case NoAuthorized -> {
-                signInUp(chatId);
-            }
+            case NoAuthorized -> signInUp(chatId);
+            default -> log.info("Status Authorized");
         }
 
 

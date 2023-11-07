@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="students", schema = "alldata")
+@Table(name="students", schema = "allData")
 @Data
 public class Student {
 
