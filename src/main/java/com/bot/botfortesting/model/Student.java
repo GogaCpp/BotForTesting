@@ -14,13 +14,13 @@ import lombok.*;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "studentname")
+    @Column(name = "studentName")
     private String name;
 
-    @Column(name = "studentpass")
+    @Column(name = "studentPass")
     private String pass;
 
     @Column(name="chat_id")

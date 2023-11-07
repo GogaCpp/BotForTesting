@@ -5,6 +5,7 @@ import com.bot.botfortesting.OperationStatus;
 import com.bot.botfortesting.config.BotConfig;
 import com.bot.botfortesting.model.Student;
 import com.bot.botfortesting.repository.StudentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,25 +15,23 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class MainBot extends TelegramLongPollingBot{
 
     final BotConfig config;
     private OperationStatus operationStatus=OperationStatus.NoAuthorized;
-    String currentName,currentPass;
+    String currentName;
+    String currentPass;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -48,7 +47,8 @@ public class MainBot extends TelegramLongPollingBot{
             this.execute(new SetMyCommands(listOfCommands,new BotCommandScopeDefault(),null));
         }
         catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error set command : "+e.getMessage());
+
         }
     }
     @Override
@@ -66,8 +66,8 @@ public class MainBot extends TelegramLongPollingBot{
             long chatId = update.getMessage().getChatId();
 
             switch (messageText) {
-                case "/start" -> StartBot(chatId);
-                case "/test" -> Testing(chatId);
+                case "/start" -> startBot(chatId);
+                case "/test" -> testing(chatId);
                 default -> lookstatus(chatId,messageText);
             }
         }
@@ -78,14 +78,14 @@ public class MainBot extends TelegramLongPollingBot{
                 SendMessage sendMessage=new SendMessage();
                 sendMessage.setChatId(chatId);
                 sendMessage.setText("Введите логин/почту");
-                SendMsg(sendMessage);
+                sendMsg(sendMessage);
                 operationStatus=OperationStatus.TakeNameAut;
             }
             if(callbackData.equals("REG_BUTTON")){
                 SendMessage sendMessage=new SendMessage();
                 sendMessage.setChatId(chatId);
                 sendMessage.setText("Введите логин/почту");
-                SendMsg(sendMessage);
+                sendMsg(sendMessage);
                 operationStatus=OperationStatus.TakeNameReg;
             }
         }
@@ -93,7 +93,7 @@ public class MainBot extends TelegramLongPollingBot{
 
 
 
-    private void SendMsg(SendMessage sendMessage)
+    private void sendMsg(SendMessage sendMessage)
     {
         try {
             execute(sendMessage);
@@ -101,14 +101,14 @@ public class MainBot extends TelegramLongPollingBot{
             throw new RuntimeException(e);
         }
     }
-    private void SimpleSend(long chatId,String text){
+    private void simpleSend(long chatId,String text){
         SendMessage sendMessage=new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
-        SendMsg(sendMessage);
+        sendMsg(sendMessage);
     }
 
-    private void StartBot(long chatId) {
+    private void startBot(long chatId) {
 
 //        Student student=new Student("eaa.20@uni-dubna.ru","11223344");
 //        studentRepository.save(student);
@@ -117,24 +117,24 @@ public class MainBot extends TelegramLongPollingBot{
 
 
 
-        List<Student> Students=studentRepository.findAll();
-        for (Student st:Students) {
+        List<Student> students=studentRepository.findAll();
+        for (Student st:students) {
                 System.out.println(st.getId()+" "+st.getName());
             if(st.getChatId()==chatId)
             {
                 System.out.println("---------");
 
-                SimpleSend(chatId,"Вы авторизовались, как "+st.getName());
+                simpleSend(chatId,"Вы авторизовались, как "+st.getName());
                 return;
             }
         }
-        //if (message.getText().equalsIgnoreCase("/start"))
+
 
         signInUp(chatId);
 
 
     }
-    private void Testing(long chatId) {
+    private void testing(long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText("Выберите действие:");
@@ -142,7 +142,7 @@ public class MainBot extends TelegramLongPollingBot{
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
     private void signInUp(long chatId){
@@ -173,7 +173,7 @@ public class MainBot extends TelegramLongPollingBot{
         sendMessage.setReplyMarkup(markupInLine);
 
 
-        SendMsg(sendMessage);
+        sendMsg(sendMessage);
 
     }
     private void lookstatus(long chatId,String messegeText) {
@@ -184,45 +184,45 @@ public class MainBot extends TelegramLongPollingBot{
 
             case TakeNameAut -> {
                 currentName=messegeText;
-                SimpleSend(chatId,"Введите пароль");
+                simpleSend(chatId,"Введите пароль");
                 operationStatus=OperationStatus.TakePassAut;
                 return;
             }
             case TakePassAut -> {
                 currentPass=messegeText;
 
-                List<Student> Students=studentRepository.findAll();
-                for (Student st:Students) {
+                List<Student> students=studentRepository.findAll();
+                for (Student st:students) {
                     if (st.getName().equals(currentName) && st.getPass().equals(currentPass)){
-                        SimpleSend(chatId,"Вы успешно авторизовались");
+                        simpleSend(chatId,"Вы успешно авторизовались");
                         operationStatus=OperationStatus.Authorized;
                         return;
                     }
                 }
 
-                SimpleSend(chatId,"Неверный логин или пароль");
+                simpleSend(chatId,"Неверный логин или пароль");
                 operationStatus=OperationStatus.NoAuthorized;
                 return;
             }
             case TakeNameReg -> {
                 currentName=messegeText;
-                List<Student> Students=studentRepository.findAll();
-                for (Student st:Students) {
+                List<Student> students=studentRepository.findAll();
+                for (Student st:students) {
                     if(st.getName().equals(currentName)){
-                        SimpleSend(chatId,"Данное имя занято");
+                        simpleSend(chatId,"Данное имя занято");
                         operationStatus=OperationStatus.NoAuthorized;
                     }
                 }
 
-                SimpleSend(chatId,"Введите пароль");
+                simpleSend(chatId,"Введите пароль");
                 operationStatus=OperationStatus.TakePassReg;
-                return;
+
 
             }
             case TakePassReg -> {
                 currentPass=messegeText;
                 studentRepository.save(new Student(currentName,currentPass,chatId));
-                SimpleSend(chatId,"Вы успешно зарегистрировались");
+                simpleSend(chatId,"Вы успешно зарегистрировались");
                 operationStatus=OperationStatus.Authorized;
             }
             case NoAuthorized -> {
