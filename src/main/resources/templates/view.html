@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    <li th:each="stud : ${students}">
+        <div th:text="*{stud.name}"></div><div th:text="*{stud.email}"></div>
+    </li>
+</ul>
+</body>
+</html>
