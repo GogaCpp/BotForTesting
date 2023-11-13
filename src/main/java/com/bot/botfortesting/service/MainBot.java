@@ -104,10 +104,12 @@ public class MainBot extends TelegramLongPollingBot{
         }
     }
     private void simpleSend(long chatId,String text){
+        log.info("Sending massage : "+text+" to "+ chatId);
         SendMessage sendMessage=new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
         sendMsg(sendMessage);
+
     }
 
     private void startBot(long chatId) {
@@ -122,7 +124,7 @@ public class MainBot extends TelegramLongPollingBot{
 
             if(st.getChatId()==chatId)
             {
-                log.info("Login by Telegram Id");
+                log.info("Login by Telegram Id for : "+chatId);
 
                 simpleSend(chatId,"Вы авторизовались, как "+st.getName());
                 return;

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="students", schema = "allData")
+@Table(name="students", schema = "alldata")
 @Data
 public class Student {
 
@@ -17,10 +17,10 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "studentName")
+    @Column(name = "studentname")
     private String name;
 
-    @Column(name = "studentPass")
+    @Column(name = "studentpass")
     private String pass;
 
     @Column(name="chat_id")
@@ -31,6 +31,11 @@ public class Student {
         this.name = name;
         this.pass = pass;
         this.chatId=chatId;
+    }
+    public Student(String name, String pass) {
+
+        this.name = name;
+        this.pass = pass;
     }
 
 }
