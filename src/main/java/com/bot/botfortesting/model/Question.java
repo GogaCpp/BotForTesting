@@ -1,6 +1,5 @@
 package com.bot.botfortesting.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,13 +8,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="universities", schema = "alldata")
+@Table(name="questions", schema = "alldata")
 @Data
-public class University {
+public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="name")
-    private String name;
+    @Column(name="question")
+    private String question;
+
+    @Column(name="type")
+    private String type;
+
+
+
 }

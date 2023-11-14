@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="universities", schema = "alldata")
+@Table(name="disciplines", schema = "alldata")
 @Data
-public class University {
+public class Discipline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

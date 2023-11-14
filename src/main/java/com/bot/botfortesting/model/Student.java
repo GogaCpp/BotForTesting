@@ -26,6 +26,9 @@ public class Student {
     @Column(name="chat_id")
     private long chatId;
 
+    @Column(name="university_id")
+    private long universityId;
+
     public Student(String name, String pass,long chatId) {
 
         this.name = name;

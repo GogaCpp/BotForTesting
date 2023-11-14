@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="admin", schema = "alldata")
+@Table(name="admins", schema = "alldata")
 @Data
 public class Admin {
     @Id
