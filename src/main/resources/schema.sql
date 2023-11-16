@@ -5,7 +5,6 @@ CREATE SCHEMA IF NOT EXISTS allData;
 CREATE TABLE IF NOT EXISTS allData.students (
     id BIGSERIAL PRIMARY KEY,
     studentName TEXT,
-    studentPass TEXT,
     groupName TEXT,
     chat_id BIGINT,
     university_id BIGINT not null
@@ -55,12 +54,12 @@ CREATE TABLE IF NOT EXISTS allData.super_admin(
 /*----------------второй блок(связи баз, групп вопросов, дисциплин и тестов)(9 таблиц)----------------------*/
 
 
-
+CREATE TYPE questionType AS ENUM ('SingleChoice', 'MultipleChoice', 'CalculationTask');
 /*вопросы*/
 CREATE TABLE IF NOT EXISTS allData.questions (
     id BIGSERIAL PRIMARY KEY,
     question TEXT,
-    type TEXT
+    type questionType
 );
 /* ответы*/
 CREATE TABLE IF NOT EXISTS allData.answers(

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -19,8 +21,15 @@ public class Question {
     private String question;
 
     @Column(name="type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TypeQuestion type;
 
 
+
+    public enum TypeQuestion{
+        SingleChoice,
+        MultipleChoice,
+        CalculationTask
+    }
 
 }

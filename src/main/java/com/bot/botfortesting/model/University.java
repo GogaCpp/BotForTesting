@@ -18,4 +18,8 @@ public class University {
 
     @Column(name="name")
     private String name;
+
+    public University(String name){
+        this.name=name;
+    }
 }

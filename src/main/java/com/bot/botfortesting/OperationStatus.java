@@ -4,8 +4,8 @@ public enum OperationStatus {
 
     Authorized,
     NoAuthorized,
-    TakeNameAut,
-    TakePassAut,
+    NeedNameReg,
     TakeNameReg,
-    TakePassReg
+    TakeGroupReg,
+    TakeUnivReg
 }

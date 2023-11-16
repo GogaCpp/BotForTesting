@@ -20,8 +20,8 @@ public class Student {
     @Column(name = "studentname")
     private String name;
 
-    @Column(name = "studentpass")
-    private String pass;
+    @Column(name = "groupname")
+    private String group;
 
     @Column(name="chat_id")
     private long chatId;
@@ -29,16 +29,17 @@ public class Student {
     @Column(name="university_id")
     private long universityId;
 
-    public Student(String name, String pass,long chatId) {
+    public Student(String name, String group,long chatId,long universityId) {
 
         this.name = name;
-        this.pass = pass;
+        this.group = group;
         this.chatId=chatId;
+        this.universityId=universityId;
     }
     public Student(String name, String pass) {
 
         this.name = name;
-        this.pass = pass;
+        this.group = pass;
     }
 
 }
