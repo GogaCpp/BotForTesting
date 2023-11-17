@@ -8,23 +8,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="admins", schema = "alldata")
+@Table(name="super_admin", schema = "alldata")
 @Data
-public class Admin {
+public class SuperAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(name="name")
-    private String name;
 
     @Column(name="pass")
     private String pass;
 
     @Column(name="login")
     private String login;
-
-    @Column(name = "id_university",nullable = false)
-    private Long universityId;
-
 }

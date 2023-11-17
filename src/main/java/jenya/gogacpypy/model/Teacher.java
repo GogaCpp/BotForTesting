@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="admins", schema = "alldata")
+@Table(name="teachers", schema = "alldata")
 @Data
-public class Admin {
+public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -24,7 +24,9 @@ public class Admin {
     @Column(name="login")
     private String login;
 
+    @Column(name="tg_account")
+    private String tgAccount;
+
     @Column(name = "id_university",nullable = false)
     private Long universityId;
-
 }

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="admins", schema = "alldata")
+@Table(name="groups", schema = "alldata")
 @Data
-public class Admin {
+public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -18,13 +18,8 @@ public class Admin {
     @Column(name="name")
     private String name;
 
-    @Column(name="pass")
-    private String pass;
+    @Column(name="id_collection")
+    private long collectionId;
 
-    @Column(name="login")
-    private String login;
-
-    @Column(name = "id_university",nullable = false)
-    private Long universityId;
 
 }

@@ -1,8 +1,10 @@
 package jenya.gogacpypy.repository;
-import jenya.gogacpypy.model.Student;
+
+import jenya.gogacpypy.model.Admin;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudentRepository extends JpaRepository<Student, Long> {
+public interface AdminRepository extends JpaRepository<Admin, Long> {
 }

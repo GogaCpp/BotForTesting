@@ -3,10 +3,13 @@ package jenya.gogacpypy.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+//@Getter
+//@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="students",schema = "alldata")
+@Table(name="students", schema = "alldata")
 @Data
 public class Student {
 
@@ -24,7 +27,7 @@ public class Student {
     private long chatId;
 
     @Column(name="university_id")
-    private long uniId=-1;
+    private long universityId;
 
     public Student(String name, String pass,long chatId) {
 
