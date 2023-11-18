@@ -86,4 +86,14 @@ public class GogacpypyApplication {
         return "Question saved";
     }
 
+    @PostMapping ("/del_answer")
+    public String del_answer(@RequestBody long id,
+                               BindingResult result) {
+        if (result.hasErrors()) {
+            return "Have an error";
+        }
+        AnswerRepository.deleteById(id);
+        return "Question saved";
+    }
+
 }

@@ -3,9 +3,6 @@ package jenya.gogacpypy.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-//@Getter
-//@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,25 +17,24 @@ public class Student {
     @Column(name = "studentname")
     private String name;
 
-    @Column(name = "studentpass")
-    private String pass;
 
     @Column(name="chat_id")
     private long chatId;
 
-    @Column(name="university_id")
-    private long universityId;
+//    @Column(name="university_id")
+//    private long universityId;
 
-    public Student(String name, String pass,long chatId) {
+    @ManyToOne
+    @JoinColumn(name="university_id")
+    private University university;
+
+    public Student(String name, long chatId) {
 
         this.name = name;
-        this.pass = pass;
         this.chatId=chatId;
     }
-    public Student(String name, String pass) {
+    public Student(String name ) {
 
         this.name = name;
-        this.pass = pass;
     }
-
 }

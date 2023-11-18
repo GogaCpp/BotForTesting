@@ -27,6 +27,10 @@ public class Teacher {
     @Column(name="tg_account")
     private String tgAccount;
 
-    @Column(name = "id_university",nullable = false)
-    private Long universityId;
+//    @Column(name = "id_university",nullable = false)
+//    private Long universityId;
+
+    @ManyToOne
+    @JoinColumn(name="id_university")
+    private University university;
 }

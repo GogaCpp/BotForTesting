@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    @Query("SELECT a FROM Answer a WHERE a.questionId = :qid")
-    List<Answer> findByQuestionId(@Param("qid") long questionId);
+
+    List<Answer> findByQuestionId(long questionId);
 }
