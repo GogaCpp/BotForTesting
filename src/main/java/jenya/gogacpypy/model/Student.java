@@ -17,12 +17,11 @@ public class Student {
     @Column(name = "studentname")
     private String name;
 
-
     @Column(name="chat_id")
     private long chatId;
 
-//    @Column(name="university_id")
-//    private long universityId;
+    @Column(name="groupname")
+    private String group;
 
     @ManyToOne
     @JoinColumn(name="university_id")
