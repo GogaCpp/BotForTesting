@@ -26,10 +26,10 @@ public class StudentAnswer {
     @Column(name="answer")
     private String answer;
 
-    @Column(name="time_start")
+    @Column(name="timestart")
     private Date timeStart;
 
-    @Column(name="time_end")
+    @Column(name="timeend")
     private Date timeEnd;
 
     @Column(name = "test_id")

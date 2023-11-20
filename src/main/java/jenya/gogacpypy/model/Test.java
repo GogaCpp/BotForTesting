@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,4 +23,14 @@ public class Test {
 
     @Column(name="id_collection")
     private long collectionId;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "tests_to_groups",
+            joinColumns = { @JoinColumn(name = "id_test") },
+            inverseJoinColumns = { @JoinColumn(name = "id_group") })
+    private Set<Group> groups = new HashSet<>();
 }

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -18,5 +21,15 @@ public class Collection {
 
     @Column(name="name")
     private String name;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "collections_to_questions",
+            joinColumns = { @JoinColumn(name = "id_collection") },
+            inverseJoinColumns = { @JoinColumn(name = "id_question") })
+    private Set<Question> questions = new HashSet<>();
 
 }
