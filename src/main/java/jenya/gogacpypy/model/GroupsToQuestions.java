@@ -15,9 +15,9 @@ public class GroupsToQuestions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_question")
+    @Column(name="question_id")
     private long questionId;
 
-    @Column(name="id_group")
+    @Column(name="group_id")
     private long groupId;
 }

@@ -15,9 +15,9 @@ public class DisciplinesToCollections {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_disciplines")
+    @Column(name="discipline_id")
     private long disciplineId;
 
-    @Column(name="id_collection")
+    @Column(name="collection_id")
     private long collectionId;
 }

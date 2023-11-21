@@ -21,7 +21,7 @@ public class Answer {
     @Column(name="correct")
     private boolean correct;
 
-    @Column(name="id_question")
+    @Column(name="question_id")
     private long questionId;
 
 }

@@ -1,13 +1,12 @@
 package jenya.gogacpypy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,11 +21,12 @@ public class Group {
     @Column(name="name")
     private String name;
 
-//    @Column(name="id_collection")
+//    @Column(name="collection_id",insertable=false, updatable=false)
 //    private long collectionId;
 
+//    @JsonIgnoreProperties("groups")
     @ManyToOne
-    @JoinColumn(name="id_collection")
+    @JoinColumn(name = "collection_id")
     private Collection collection;
 
     @ManyToMany(fetch = FetchType.LAZY,
@@ -34,9 +34,9 @@ public class Group {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             })
-    @JoinTable(name = "questions_to_group",
-            joinColumns = { @JoinColumn(name = "id_group") },
-            inverseJoinColumns = { @JoinColumn(name = "id_question") })
+    @JoinTable(name = "questions_to_group", schema = "alldata",
+            joinColumns = { @JoinColumn(name = "group_id") },
+            inverseJoinColumns = { @JoinColumn(name = "question_id") })
     private List<Question> questions;
 
 

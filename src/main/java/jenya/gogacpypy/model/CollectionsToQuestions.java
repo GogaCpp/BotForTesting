@@ -15,10 +15,10 @@ public class CollectionsToQuestions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_question")
+    @Column(name="question_id")
     private long questionId;
 
-    @Column(name="id_collection")
+    @Column(name="collection_id")
     private long collectionId;
 
 

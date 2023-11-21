@@ -14,6 +14,7 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 public class DisciplineController {
+
     @Autowired
     private DisciplineRepository DisciplineRepository;
     @Autowired
@@ -24,7 +25,7 @@ public class DisciplineController {
         return DisciplineRepository.findAll();
     }
 
-    @GetMapping("/discipline_by_id")
+    @PostMapping("/discipline_by_id")
     public Optional<Discipline> discipline_by_id(@RequestBody long id) {
         return DisciplineRepository.findById(id);
     }

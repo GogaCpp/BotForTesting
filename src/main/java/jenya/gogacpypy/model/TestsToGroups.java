@@ -19,14 +19,14 @@ public class TestsToGroups {
 //    private long groupId;
 
     @ManyToOne
-    @JoinColumn(name="id_group")
+    @JoinColumn(name="group_id")
     private Group group;
 
 //    @Column(name="id_test")
 //    private long testId;
 
     @ManyToOne
-    @JoinColumn(name="id_test")
+    @JoinColumn(name="test_id")
     private Test test;
 
     @Column(name="count_questions")

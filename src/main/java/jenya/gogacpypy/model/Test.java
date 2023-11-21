@@ -26,16 +26,16 @@ public class Test {
 //    private long collectionId;
 
     @ManyToOne
-    @JoinColumn(name="id_collection")
+    @JoinColumn(name="collection_id")
     private Collection collection;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "tests_to_groups",
-            joinColumns = { @JoinColumn(name = "id_test") },
-            inverseJoinColumns = { @JoinColumn(name = "id_group") })
-    private List<Group> groups;
+//    @ManyToMany(fetch = FetchType.LAZY,
+//            cascade = {
+//                    CascadeType.PERSIST,
+//                    CascadeType.MERGE
+//            })
+//    @JoinTable(name = "tests_to_groups",  schema = "alldata",
+//            joinColumns = { @JoinColumn(name = "test_id") },
+//            inverseJoinColumns = { @JoinColumn(name = "group_id") })
+//    private List<Group> groups;
 }

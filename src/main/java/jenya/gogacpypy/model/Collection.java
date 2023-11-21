@@ -1,5 +1,6 @@
 package jenya.gogacpypy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +30,11 @@ public class Collection {
                     CascadeType.MERGE
             })
     @JoinTable(name = "collections_to_questions", schema = "alldata",
-            joinColumns = { @JoinColumn(name = "id_collection") },
-            inverseJoinColumns = { @JoinColumn(name = "id_question") })
+            joinColumns = { @JoinColumn(name = "collection_id") },
+            inverseJoinColumns = { @JoinColumn(name = "question_id") })
     private List<Question> questions;
+
+//    @JsonIgnoreProperties("collection")
+//    @OneToMany(mappedBy = "collection")
+//    private List<Group> groups;
 }

@@ -1,6 +1,5 @@
 package jenya.gogacpypy.Controllers;
 
-import jenya.gogacpypy.model.DisciplinesToCollections;
 import jenya.gogacpypy.model.Group;
 import jenya.gogacpypy.model.GroupsToQuestions;
 import jenya.gogacpypy.repository.GroupRepository;
@@ -25,9 +24,14 @@ public class GroupController {
         return GroupRepository.findAll();
     }
 
-    @GetMapping("/group_by_id")
+    @PostMapping("/group_by_id")
     public Optional<Group> group_by_id(@RequestBody long id) {
         return GroupRepository.findById(id);
+    }
+
+    @PostMapping("/groups_by_collection_id")
+    public List<Group> groups_by_collection_id(@RequestBody long id) {
+        return GroupRepository.findByCollectionId(id);
     }
 
     @PostMapping("/add_group")

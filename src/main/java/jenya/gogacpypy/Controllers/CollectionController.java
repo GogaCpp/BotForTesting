@@ -19,6 +19,7 @@ public class CollectionController {
     private CollectionRepository CollectionRepository;
     @Autowired
     private CollectionsToQuestionsRepository CollectionsToQuestionsRepository;
+
     @GetMapping("/collections")
     public List<Collection> view_collections() {
         return CollectionRepository.findAll();

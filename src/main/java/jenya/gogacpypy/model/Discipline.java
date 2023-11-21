@@ -6,8 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,8 +26,8 @@ public class Discipline {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             })
-    @JoinTable(name = "disciplines_to_collection",
-            joinColumns = { @JoinColumn(name = "id_disciplines") },
-            inverseJoinColumns = { @JoinColumn(name = "id_collection") })
-    private Set<Collection> collections = new HashSet<>();
+    @JoinTable(name = "disciplines_to_collection", schema = "alldata",
+            joinColumns = { @JoinColumn(name = "discipline_id") },
+            inverseJoinColumns = { @JoinColumn(name = "collection_id") })
+    private List<Collection> collections;
 }

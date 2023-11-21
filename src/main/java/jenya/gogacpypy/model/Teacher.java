@@ -31,6 +31,6 @@ public class Teacher {
 //    private Long universityId;
 
     @ManyToOne
-    @JoinColumn(name="id_university")
+    @JoinColumn(name="university_id")
     private University university;
 }
