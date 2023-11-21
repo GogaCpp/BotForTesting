@@ -18,7 +18,7 @@ public class Question {
     private long id;
 
     @Column(name="question")
-    private String question;
+    private String name;
 
     @Column(name="type")
     private String type;

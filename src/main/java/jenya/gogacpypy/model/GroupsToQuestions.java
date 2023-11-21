@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="questions_to_group", schema = "alldata")
 @Data
-public class QuestionsToGroups {
+public class GroupsToQuestions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -15,11 +15,19 @@ public class TestsToGroups {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_group")
-    private long groupId;
+//    @Column(name="id_group")
+//    private long groupId;
 
-    @Column(name="id_test")
-    private long testId;
+    @ManyToOne
+    @JoinColumn(name="id_group")
+    private Group group;
+
+//    @Column(name="id_test")
+//    private long testId;
+
+    @ManyToOne
+    @JoinColumn(name="id_test")
+    private Test test;
 
     @Column(name="count_questions")
     private long questionsCount;
