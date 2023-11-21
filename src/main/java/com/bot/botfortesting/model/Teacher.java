@@ -27,6 +27,6 @@ public class Teacher {
     @Column(name="tg_account")
     private String tgAccount;
 
-    @Column(name = "id_university",nullable = false)
+    @Column(name = "university_id",nullable = false)
     private Long universityId;
 }

@@ -15,12 +15,18 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="answer")
-    private String answer;
+    @Column(name="name")
+    private String name;
 
     @Column(name="correct")
     private boolean correct;
 
-    @Column(name="id_question")
+    @Column(name="question_id")
     private long questionId;
+
+    public Answer(String name,boolean correct,long questionId){
+        this.name=name;
+        this.correct=correct;
+        this.questionId=questionId;
+    }
 }

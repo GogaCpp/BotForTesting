@@ -15,12 +15,22 @@ public class TestsToGroups {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_group")
+    @Column(name="group_id")
     private long groupId;
 
-    @Column(name="id_test")
+    @Column(name="test_id")
     private long testId;
 
     @Column(name="count_questions")
     private long questionsCount;
+
+    public TestsToGroups(long groupId,long testId,long questionsCount){
+        this.groupId=groupId;
+        this.testId=testId;
+        this.questionsCount=questionsCount;
+
+
+    }
+
+
 }

@@ -18,6 +18,10 @@ public class Test {
     @Column(name="name")
     private String name;
 
-    @Column(name="id_collection")
+    @Column(name="collection_id")
     private long collectionId;
+
+    public Test(String name){
+        this.name=name;
+    }
 }

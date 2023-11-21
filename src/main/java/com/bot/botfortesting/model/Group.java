@@ -18,7 +18,7 @@ public class Group {
     @Column(name="name")
     private String name;
 
-    @Column(name="id_collection")
+    @Column(name="collection_id")
     private long collectionId;
 
 

@@ -23,8 +23,8 @@ public class StudentAnswer {
     @Column(name = "question_id")
     private long questionId;
 
-    @Column(name="answer")
-    private String answer;
+    @Column(name="name")
+    private String name;
 
     @Column(name="time_start")
     private Date timeStart;

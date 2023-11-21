@@ -17,19 +17,17 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="question")
-    private String question;
+    @Column(name="name")
+    private String name;
 
     @Column(name="type")
-    @Enumerated(EnumType.STRING)
-    private TypeQuestion type;
+    private String type;
 
 
-
-    public enum TypeQuestion{
-        SingleChoice,
-        MultipleChoice,
-        CalculationTask
+    public Question(String name,String type){
+        this.name =name;
+        this.type=type;
     }
+
 
 }

@@ -7,5 +7,6 @@ public enum OperationStatus {
     NeedNameReg,
     TakeNameReg,
     TakeGroupReg,
-    TakeUnivReg
+    TakeUnivReg,
+    Testing
 }

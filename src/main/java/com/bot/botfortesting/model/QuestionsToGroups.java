@@ -8,16 +8,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="questions_to_group", schema = "alldata")
+@Table(name="questions_to_groups", schema = "alldata")
 @Data
 public class QuestionsToGroups {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_question")
+    @Column(name="question_id")
     private long questionId;
 
-    @Column(name="id_group")
+    @Column(name="group_id")
     private long groupId;
+
+    public QuestionsToGroups(long questionId,long groupId){
+        this.groupId=groupId;
+        this.questionId=questionId;
+    }
 }

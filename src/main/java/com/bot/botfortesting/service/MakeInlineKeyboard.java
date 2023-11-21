@@ -21,7 +21,7 @@ import java.util.Objects;
 public class MakeInlineKeyboard {
 
 
-
+    List<CurrentAnswer> currentAnswers=new ArrayList<>();
 
     public InlineKeyboardMarkup SingInUpKeyboard(){
 
@@ -99,17 +99,29 @@ public class MakeInlineKeyboard {
         rowsInLIne.add(row);
     }
     
-    public InlineKeyboardMarkup SingleChoiceKeyboard(Question question, AnswerRepository answerRepository)
+    public List<List<InlineKeyboardButton>> SingleChoiceKeyboard(Question question, AnswerRepository answerRepository)
     {
-        InlineKeyboardMarkup markupInLine=new InlineKeyboardMarkup();
+
 
         List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
         for (Answer answer:answers) {
             var tempButton=new InlineKeyboardButton();
-            tempButton.setText(answer.getAnswer());
-            tempButton.setCallbackData("SHQ"+answer.getAnswer());
+
+            tempButton.setText(answer.getName());
+            tempButton.setCallbackData("SCQ"+answer.getName());
+            for (CurrentAnswer currentAnswer: currentAnswers) {
+                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()){
+                    tempButton.setText(answer.getName()+"✅");
+                    tempButton.setCallbackData("SCQ"+answer.getName()+"✅");
+                    break;
+                }
+            }
+
+
+            
+
             List<InlineKeyboardButton> row = new ArrayList<>();
 
 
@@ -117,39 +129,79 @@ public class MakeInlineKeyboard {
             rowsInLIne.add(row);
         }
 
-        markupInLine.setKeyboard(rowsInLIne);
-        return markupInLine;
+
+        return rowsInLIne;
     }
-    public InlineKeyboardMarkup MultipleChoiceKeyboard(Question question, AnswerRepository answerRepository,String selectedAnswer)
+    public List<List<InlineKeyboardButton>> MultipleChoiceKeyboard(Question question, AnswerRepository answerRepository)
     {
-        InlineKeyboardMarkup markupInLine=new InlineKeyboardMarkup();
+
 
         List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
+
+
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
         for (Answer answer:answers) {
             var tempButton=new InlineKeyboardButton();
-            if(Objects.equals(answer.getAnswer(), selectedAnswer))
-                tempButton.setText(answer.getAnswer()+"✅");
-            else
-                tempButton.setText(answer.getAnswer());
-            tempButton.setCallbackData("SHQ"+answer.getAnswer());
+
+            tempButton.setText(answer.getName());
+            for (CurrentAnswer currentAnswer: currentAnswers) {
+                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()){
+                    tempButton.setText(answer.getName()+"✅");
+
+                }
+            }
+            tempButton.setText(answer.getName());
+            tempButton.setCallbackData("MHQ"+answer.getName());
             List<InlineKeyboardButton> row = new ArrayList<>();
 
 
             row.add(tempButton);
             rowsInLIne.add(row);
         }
-        var saveAnswer=new InlineKeyboardButton();
-        saveAnswer.setText("Сохранить");
-        saveAnswer.setCallbackData("SAVEANSWER");
+        
+
+
+
+        return rowsInLIne;
+    }
+    public InlineKeyboardMarkup QuestionKeyboardMarkup(Question question, AnswerRepository answerRepository){
+        List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
+
+
+
+        InlineKeyboardMarkup markupInLine=new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLIne;
+
+        switch (question.getType()){
+         case "SingleChoice"->{
+             rowsInLIne=SingleChoiceKeyboard(question,answerRepository);
+         }
+         case "MultiplyChoice"->{
+             rowsInLIne=MultipleChoiceKeyboard(question,answerRepository);
+         }
+            default -> {
+                rowsInLIne=new ArrayList<>();
+            }
+        }
 
         List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(saveAnswer);
-        rowsInLIne.add(row);
 
+        var left=new InlineKeyboardButton();
+        left.setText("<-");
+        left.setCallbackData("GOLEFTPAGETEST");
+
+        var right=new InlineKeyboardButton();
+        right.setText("->");
+        right.setCallbackData("GORIGHTPAGETEST");
+
+        row.add(left);
+        row.add(right);
+        rowsInLIne.add(row);
         markupInLine.setKeyboard(rowsInLIne);
+
         return markupInLine;
     }
 
 }
+

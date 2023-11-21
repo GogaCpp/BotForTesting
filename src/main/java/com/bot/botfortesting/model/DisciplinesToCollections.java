@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="disciplines_to_collection", schema = "alldata")
+@Table(name="disciplines_to_collections", schema = "alldata")
 @Data
 public class DisciplinesToCollections {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="id_disciplines")
+    @Column(name="disciplines_id")
     private long disciplineId;
 
-    @Column(name="id_collection")
+    @Column(name="collection_id")
     private long collectionId;
 }

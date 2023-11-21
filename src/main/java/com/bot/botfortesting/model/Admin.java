@@ -24,7 +24,7 @@ public class Admin {
     @Column(name="login")
     private String login;
 
-    @Column(name = "id_university",nullable = false)
+    @Column(name = "university_id",nullable = false)
     private Long universityId;
 
 }
