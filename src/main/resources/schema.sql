@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS allData.groups(
     collection_id BIGINT not null
 );
 /* вопросы группы вопросов*/
-CREATE TABLE IF NOT EXISTS allData.questions_to_groups(
+CREATE TABLE IF NOT EXISTS allData.groups_to_questions(
     id BIGSERIAL PRIMARY KEY,
     group_id BIGINT not null,
     question_id BIGINT not null

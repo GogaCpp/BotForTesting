@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="questions_to_groups", schema = "alldata")
+@Table(name="groups_to_questions", schema = "alldata")
 @Data
 public class QuestionsToGroups {
     @Id
