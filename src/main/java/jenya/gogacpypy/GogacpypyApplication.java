@@ -1,7 +1,15 @@
 package jenya.gogacpypy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jenya.gogacpypy.Utils.JWTProvider;
+import jenya.gogacpypy.Utils.JWTRequest;
+import jenya.gogacpypy.Utils.JWTResponse;
+import jenya.gogacpypy.Utils.User;
 import jenya.gogacpypy.model.*;
 import jenya.gogacpypy.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -11,65 +19,53 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class GogacpypyApplication {
 
     @Autowired
-    private AnswerRepository AnswerRepository;
+    private SuperAdminRepository SuperAdminRepository;
     @Autowired
-    private QuestionRepository QuestionRepository;
+    private AdminRepository AdminRepository;
+    @Autowired
+    private TeacherRepository TeacherRepository;
 
-    @PostMapping("/answers_by_question")
-    public List<Answer> view_answers_by_question(@RequestBody long question_id) {
-        return AnswerRepository.findByQuestionId(question_id);
-    }
+    private final JWTProvider jwtProvider;
+    private final ObjectMapper mapper;
 
-    @GetMapping("/questions")
-    public List<Question> view_questions() {
-        return QuestionRepository.findAll();
-    }
-
-    @PostMapping ("/question_by_id")
-    public Optional<Question> question_by_id(@RequestBody long id) {
-        return QuestionRepository.findById(id);
-    }
-
-    @PostMapping ("/add_answer")
-    public String add_answer(@RequestBody Answer answer,
-                               BindingResult result) {
-        if (result.hasErrors()) {
-            return "{\"res\":\"Have an error\"}";
+    @PostMapping("/login")
+    public String login(@RequestBody JWTRequest JWTRequest,
+                        BindingResult result) throws JsonProcessingException {
+        Optional<Teacher> t = TeacherRepository.findFirstByLoginAndPass(JWTRequest.getLogin(), JWTRequest.getPassword());
+        if(t.isPresent()){
+            User user = new User(t.get().getLogin(),t.get().getPass(),1);
+            String accessToken = jwtProvider.generateAccessToken(user);
+            String refreshToken = jwtProvider.generateRefreshToken(user);
+            return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
         }
-        AnswerRepository.save(answer);
-        return "{\"res\":\"Success\"}";
+        Optional<Admin> a = AdminRepository.findFirstByLoginAndPass(JWTRequest.getLogin(), JWTRequest.getPassword());
+        if(a.isPresent()){
+            User user = new User(a.get().getLogin(),a.get().getPass(),2);
+            String accessToken = jwtProvider.generateAccessToken(user);
+            String refreshToken = jwtProvider.generateRefreshToken(user);
+            return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
+        }
+        Optional<SuperAdmin> s = SuperAdminRepository.findFirstByLoginAndPass(JWTRequest.getLogin(), JWTRequest.getPassword());
+        if(s.isPresent()){
+            User user = new User(s.get().getLogin(),s.get().getPass(),3);
+            String accessToken = jwtProvider.generateAccessToken(user);
+            String refreshToken = jwtProvider.generateRefreshToken(user);
+            return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
+        }
+        return "{\"res\":\"Cant find user\"}";
     }
 
-    @PostMapping ("/add_question")
-    public String add_question(@RequestBody Question question,
-                              BindingResult result) {
-        if (result.hasErrors()) {
-            return "{\"res\":\"Have an error\"}";
-        }
-        QuestionRepository.save(question);
-        return "{\"res\":\"Success\"}";
+    @PostMapping("/claim")
+    public String login(@RequestBody String string,
+                        BindingResult result) throws JsonProcessingException {
+
+        string = string.replace("\"","");
+        System.out.println(mapper.writeValueAsString(jwtProvider.getAccessClaims(string)));
+        return mapper.writeValueAsString(jwtProvider.getAccessClaims(string));
     }
 
-    @PostMapping ("/del_question")
-    public String del_question(@RequestBody long id,
-                               BindingResult result) {
-        if (result.hasErrors()) {
-            return "{\"res\":\"Have an error\"}";
-        }
-        QuestionRepository.deleteById(id);
-        return "{\"res\":\"Success\"}";
-    }
-
-    @PostMapping ("/del_answer")
-    public String del_answer(@RequestBody long id,
-                               BindingResult result) {
-        if (result.hasErrors()) {
-            return "{\"res\":\"Have an error\"}";
-        }
-        AnswerRepository.deleteById(id);
-        return "{\"res\":\"Success\"}";
-    }
 }
