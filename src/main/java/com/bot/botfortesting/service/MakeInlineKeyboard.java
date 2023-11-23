@@ -52,22 +52,23 @@ public class MakeInlineKeyboard {
         List<University> universities=universityRepository.findAll();
         long fullPage = (int)universityRepository.count()/5;
         int notFullPage=(int)(universityRepository.count()%5);
+        log.info("fullPage "+fullPage+";   notFullPage "+notFullPage+" ;");
 
         InlineKeyboardMarkup markupInLine=new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
 
-        if (universityPage<=fullPage)
+        if (universityPage<fullPage)
         {
-            for(int i=(universityPage-1)*5;i<(universityPage)*5;i++)
+            for(int i=(universityPage)*5;i<(universityPage)*5+5;i++)
             {
                 makeUniversityRowsKeyboard(universities, rowsInLIne, i);
 
             }
         }
-        else if (universityPage==(fullPage+1))
+        else if (universityPage==fullPage)
         {
-            for(int i = (universityPage-1)*5; i<(universityPage-1)* 5 + notFullPage ; i++)
+            for(int i = (universityPage)*5; i<(universityPage)* 5 + notFullPage ; i++)
             {
                 makeUniversityRowsKeyboard(universities, rowsInLIne, i);
             }
@@ -99,7 +100,7 @@ public class MakeInlineKeyboard {
         rowsInLIne.add(row);
     }
     
-    public List<List<InlineKeyboardButton>> SingleChoiceKeyboard(Question question, AnswerRepository answerRepository)
+    public List<List<InlineKeyboardButton>> SingleChoiceKeyboard(Question question, AnswerRepository answerRepository,long chatId)
     {
 
 
@@ -112,7 +113,7 @@ public class MakeInlineKeyboard {
             tempButton.setText(answer.getName());
             tempButton.setCallbackData("SCQ"+answer.getName());
             for (CurrentAnswer currentAnswer: currentAnswers) {
-                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()){
+                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId() && currentAnswer.getChatId()==chatId){
                     tempButton.setText(answer.getName()+"✅");
                     tempButton.setCallbackData("SCQ"+answer.getName()+"✅");
                     break;
@@ -132,7 +133,7 @@ public class MakeInlineKeyboard {
 
         return rowsInLIne;
     }
-    public List<List<InlineKeyboardButton>> MultipleChoiceKeyboard(Question question, AnswerRepository answerRepository)
+    public List<List<InlineKeyboardButton>> MultipleChoiceKeyboard(Question question, AnswerRepository answerRepository,long chatId)
     {
 
 
@@ -146,7 +147,7 @@ public class MakeInlineKeyboard {
 
             tempButton.setText(answer.getName());
             for (CurrentAnswer currentAnswer: currentAnswers) {
-                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()){
+                if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()&& currentAnswer.getChatId()==chatId){
                     tempButton.setText(answer.getName()+"✅");
 
                 }
@@ -165,7 +166,7 @@ public class MakeInlineKeyboard {
 
         return rowsInLIne;
     }
-    public InlineKeyboardMarkup QuestionKeyboardMarkup(Question question, AnswerRepository answerRepository){
+    public InlineKeyboardMarkup QuestionKeyboardMarkup(Question question, AnswerRepository answerRepository,long chatId){
         List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
 
 
@@ -175,10 +176,10 @@ public class MakeInlineKeyboard {
 
         switch (question.getType()){
          case "SingleChoice"->{
-             rowsInLIne=SingleChoiceKeyboard(question,answerRepository);
+             rowsInLIne=SingleChoiceKeyboard(question,answerRepository,chatId);
          }
          case "MultiplyChoice"->{
-             rowsInLIne=MultipleChoiceKeyboard(question,answerRepository);
+             rowsInLIne=MultipleChoiceKeyboard(question,answerRepository,chatId);
          }
             default -> {
                 rowsInLIne=new ArrayList<>();

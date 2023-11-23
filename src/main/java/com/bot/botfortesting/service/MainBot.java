@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,13 +36,19 @@ import static java.util.Collections.*;
 public class MainBot extends TelegramLongPollingBot{
 
     final BotConfig config;
-    private OperationStatus operationStatus=OperationStatus.NoAuthorized;
-    String currentName;
-    String currentGroup;
-    University currentUniversity;
-    int universityPage=1;
-    int testPage=0;
-    List<Question> questionsInTest=new ArrayList<>();
+    HashMap<Long, OperationStatus> operationStatus = new HashMap<>();
+    //private OperationStatus operationStatus=OperationStatus.NoAuthorized;
+    HashMap<Long, String> currentName= new HashMap<>();
+    HashMap<Long, String> currentGroup= new HashMap<>();
+
+    /*int universityPage=1;
+    int testPage=0;*/
+
+    HashMap<Long, Integer> universityPage= new HashMap<>();
+    HashMap<Long, Integer> testPage= new HashMap<>();
+    //List<Question> questionsInTest=new ArrayList<>();
+    HashMap<Long, List<Question  >>questionsInTest=new HashMap<>();
+
     MakeInlineKeyboard makeInlineKeyboard=new MakeInlineKeyboard();
 
     //Репозитроии
@@ -97,7 +104,7 @@ public class MainBot extends TelegramLongPollingBot{
             switch (messageText) {
                 case "/start" -> startBot(chatId);
                 case "/test" -> {
-                    if(operationStatus==OperationStatus.Testing){
+                    if(operationStatus.get(chatId)==OperationStatus.Testing){
                         simpleSend(chatId,"Завершите прошлый тест");
                         break;
                     }
@@ -113,37 +120,38 @@ public class MainBot extends TelegramLongPollingBot{
             String messageText=update.getCallbackQuery().getMessage().getText();
             if(callbackData.startsWith("UNIV")){
                 String parameters = callbackData.substring("UNIV".length());
-                currentUniversity= universityRepository.findUniversitiesByName(parameters);
-                studentRepository.save(new Student(currentName,currentGroup,chatId,currentUniversity.getId()));
-                operationStatus=OperationStatus.Authorized;
+                University currentUniversity= universityRepository.findUniversitiesByName(parameters);
+                studentRepository.save(new Student(currentName.get(chatId),currentGroup.get(chatId),chatId,currentUniversity.getId()));
+                operationStatus.put(chatId,OperationStatus.Authorized);
                 deletInlineKeyboard(chatId,messageId,messageText);
-                simpleSend(chatId,"Вы авторизовались, как "+currentName);
+                simpleSend(chatId,"Вы авторизовались, как "+currentName.get(chatId));
             }
             if(callbackData.startsWith("SCQ")){
                 String parameters = callbackData.substring("SCQ".length());
                 if(callbackData.endsWith("✅"))
                 {
                     String endParameters= parameters.substring(0, parameters.length() - 1);
-                    Answer answer=answerRepository.getAnswerByNameAndQuestionId(endParameters,questionsInTest.get(testPage).getId());
-                    makeInlineKeyboard.currentAnswers.remove(new CurrentAnswer(questionsInTest.get(testPage).getId(),answer.getId()));
+                    Answer answer=answerRepository.getAnswerByNameAndQuestionId(endParameters,questionsInTest.get(chatId).get(testPage.get(chatId)).getId());
+                    makeInlineKeyboard.currentAnswers.remove(new CurrentAnswer(questionsInTest.get(chatId).get(testPage.get(chatId)).getId(),answer.getId(),chatId));
                     changePageQuestion(chatId, messageId);
                     return;
                 }
 
-                Answer answer=answerRepository.getAnswerByNameAndQuestionId(parameters,questionsInTest.get(testPage).getId());
-                makeInlineKeyboard.currentAnswers.add(new CurrentAnswer(questionsInTest.get(testPage).getId(),answer.getId()));
+                Answer answer=answerRepository.getAnswerByNameAndQuestionId(parameters,questionsInTest.get(chatId).get(testPage.get(chatId)).getId());
+                makeInlineKeyboard.currentAnswers.add(new CurrentAnswer(questionsInTest.get(chatId).get(testPage.get(chatId)).getId(),answer.getId(),chatId));
                 changePageQuestion(chatId, messageId);
             }
             switch (callbackData) {
 
 
                 case  "REG_BUTTON" -> {
-                    operationStatus = OperationStatus.NeedNameReg;
+                    operationStatus.put(chatId,OperationStatus.NeedNameReg);
                     lookStatus(chatId, messageText);
                 }
                 case  "GOLEFTPAGE"-> {
-                    if (universityPage > 1) {
-                        universityPage -= 1;
+                    if (universityPage.get(chatId) > 0) {
+
+                        universityPage.put(chatId,universityPage.get(chatId)-1);
                         changePage(chatId, messageId);
                     }
                     else {
@@ -157,8 +165,8 @@ public class MainBot extends TelegramLongPollingBot{
 
                     long fullPage = (int) universityRepository.count() / 5;
 
-                    if (universityPage <= fullPage) {
-                        universityPage += 1;
+                    if (universityPage.get(chatId) <= fullPage) {
+                        universityPage.put(chatId,universityPage.get(chatId)+1);
                         changePage(chatId, messageId);
                     }
                     else {
@@ -167,10 +175,11 @@ public class MainBot extends TelegramLongPollingBot{
 
                 }
                 case  "GOLEFTPAGETEST"-> {
-                    log.info(questionsInTest.toString());
+                    log.info(questionsInTest.get(chatId).toString());
 
-                    if (testPage > 0) {
-                        testPage -= 1;
+                    if (testPage.get(chatId) > 0) {
+
+                        testPage.put(chatId,testPage.get(chatId)-1);
                         log.info("НОМЕР СТРАНИЦЫ : "+testPage);
                         changePageQuestion(chatId, messageId);
                     }
@@ -182,12 +191,13 @@ public class MainBot extends TelegramLongPollingBot{
                 }
 
                 case "GORIGHTPAGETEST"-> {
-                    log.info(questionsInTest.toString());
+                    log.info(questionsInTest.get(chatId).toString());
 
-                    long fullPage = questionsInTest.size()-1;
+                    long fullPage = questionsInTest.get(chatId).size()-1;
 
-                    if (testPage < fullPage) {
-                        testPage += 1;
+                    if (testPage.get(chatId) < fullPage) {
+
+                        testPage.put(chatId,testPage.get(chatId)+1);
                         log.info("НОМЕР СТРАНИЦЫ : "+testPage);
                         changePageQuestion(chatId, messageId);
                     }
@@ -241,7 +251,7 @@ public class MainBot extends TelegramLongPollingBot{
 
 
 
-        massage.setReplyMarkup(makeInlineKeyboard.universityKeyboard(universityPage,universityRepository));
+        massage.setReplyMarkup(makeInlineKeyboard.universityKeyboard(universityPage.get(chatId),universityRepository));
 
         try {
             execute(massage);
@@ -253,11 +263,11 @@ public class MainBot extends TelegramLongPollingBot{
         EditMessageText massage=new EditMessageText();
         massage.setChatId(chatId);
         massage.setMessageId(messageId);
-        massage.setText(questionsInTest.get(testPage).getName());
+        massage.setText(questionsInTest.get(chatId).get(testPage.get(chatId)).getName());
 
 
 
-        massage.setReplyMarkup(makeInlineKeyboard.QuestionKeyboardMarkup(questionsInTest.get(testPage),answerRepository));
+        massage.setReplyMarkup(makeInlineKeyboard.QuestionKeyboardMarkup(questionsInTest.get(chatId).get(testPage.get(chatId)),answerRepository,chatId));
 
         try {
             execute(massage);
@@ -304,18 +314,9 @@ public class MainBot extends TelegramLongPollingBot{
 
     }
     private void startBot(long chatId) {
-        data();
+        //data();
 
-//        Student student=new Student("eaa.20@uni-dubna.ru","11223344");
-//        studentRepository.save(student);
-//        Student student2=new Student("eеу.20@uni-dubna.ru","1413");
-//        studentRepository.save(student2);
 
-//        for(int i=0;i<13;i++)
-//        {
-//            University un=new University("Unik "+String.valueOf(i));
-//            universityRepository.save(un);
-//        }
 
         List<Student> students=studentRepository.findAll();
         for (Student st:students) {
@@ -323,19 +324,23 @@ public class MainBot extends TelegramLongPollingBot{
             if(st.getChatId()==chatId)
             {
                 log.info("Login by Telegram Id for : "+chatId);
+                universityPage.put(chatId,0);
+                testPage.put(chatId,0);
+                operationStatus.put(chatId,OperationStatus.Authorized);
 
                 simpleSend(chatId,"Вы авторизовались, как "+st.getName());
                 return;
             }
         }
-
-
+        universityPage.put(chatId,0);
+        testPage.put(chatId,0);
+        operationStatus.put(chatId,OperationStatus.NoAuthorized);
         signInUp(chatId);
 
 
     }
     private void testing(long chatId,String testName) {
-        operationStatus=OperationStatus.Testing;
+        operationStatus.put(chatId,OperationStatus.Testing);
         Test test=testRepository.findByName(testName);
         if(test != null)
         {
@@ -343,8 +348,8 @@ public class MainBot extends TelegramLongPollingBot{
             goTest(chatId,test);
             SendMessage sendMessage=new SendMessage();
             sendMessage.setChatId(chatId);
-            sendMessage.setText(questionsInTest.get(0).getName());
-            sendMessage.setReplyMarkup(makeInlineKeyboard.QuestionKeyboardMarkup(questionsInTest.get(0),answerRepository));
+            sendMessage.setText(questionsInTest.get(chatId).get(0).getName());
+            sendMessage.setReplyMarkup(makeInlineKeyboard.QuestionKeyboardMarkup(questionsInTest.get(chatId).get(0),answerRepository,chatId));
             sendMsg(sendMessage);
         }
         else simpleSend(chatId,"Данного теста не существует");
@@ -352,6 +357,7 @@ public class MainBot extends TelegramLongPollingBot{
 
     }
     private  void goTest(long chatId,Test test){
+
 
         List<TestsToGroups> testsToGroups= testsToGroupsRepository.findAllByTestId(test.getId());
         for (TestsToGroups teToGgr: testsToGroups) {
@@ -362,9 +368,10 @@ public class MainBot extends TelegramLongPollingBot{
                 log.info("Id question"+ ids.toString());
                 List<Question> questions=questionRepository.findAllById(ids);
                 shuffle(questions);
+                questionsInTest.put(chatId, new ArrayList<>());
                 for (int i=0;i<teToGgr.getQuestionsCount();i++){
                     Question qs=questions.get(i);
-                    questionsInTest.add(qs);
+                    questionsInTest.get(chatId).add(qs);
                 }
                 log.info(questionsInTest.toString());
             }
@@ -391,12 +398,12 @@ public class MainBot extends TelegramLongPollingBot{
 
 
     private void lookStatus(long chatId,String messegeText) {
-        switch (operationStatus){
+        switch (operationStatus.get(chatId)){
 
             case NeedNameReg -> {
 
                 simpleSend(chatId,"Введите логин/почту");
-                operationStatus=OperationStatus.TakeNameReg;
+                operationStatus.put(chatId,OperationStatus.TakeNameReg);
 
             }
             case TakeUnivReg -> {
@@ -406,30 +413,30 @@ public class MainBot extends TelegramLongPollingBot{
 
 
 
-                sendMessage.setReplyMarkup(makeInlineKeyboard.universityKeyboard(universityPage,universityRepository));
+                sendMessage.setReplyMarkup(makeInlineKeyboard.universityKeyboard(universityPage.get(chatId),universityRepository));
                 sendMsg(sendMessage);
             }
             case TakeNameReg -> {
-                currentName=messegeText;
+                currentName.put(chatId,messegeText);
                 List<Student> students=studentRepository.findAll();
                 for (Student st:students) {
-                    if(st.getName().equals(currentName)){
+                    if(st.getName().equals(currentName.get(chatId))){
                         simpleSend(chatId,"Данное имя занято");
-                        operationStatus=OperationStatus.NoAuthorized;
+                        operationStatus.put(chatId,OperationStatus.NoAuthorized);
                         return;
                     }
                 }
 
                 simpleSend(chatId,"Введите группу");
-                operationStatus=OperationStatus.TakeGroupReg;
+                operationStatus.put(chatId,OperationStatus.TakeGroupReg);
 
 
             }
             case TakeGroupReg -> {
-                currentGroup=messegeText;
+                currentGroup.put(chatId,messegeText);
                 //studentRepository.save(new Student(currentName,currentPass,chatId));
 
-                operationStatus=OperationStatus.TakeUnivReg;
+                operationStatus.put(chatId,OperationStatus.TakeUnivReg);
                 lookStatus(chatId,messegeText);
 
             }
