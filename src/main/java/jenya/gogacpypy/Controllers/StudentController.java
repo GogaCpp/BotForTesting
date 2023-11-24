@@ -15,12 +15,12 @@ public class StudentController {
     private StudentRepository StudentRepository;
 
     @GetMapping("/students")
-    public List<Student> view_students() {
+    public List<Student> view_students(@RequestHeader("Authorization") String token) {
         return StudentRepository.findAll();
     }
 
     @PostMapping("/add_student")
-    public String add_student(@RequestBody Student student,
+    public String add_student(@RequestHeader("Authorization") String token,@RequestBody Student student,
                               BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -30,7 +30,7 @@ public class StudentController {
     }
 
     @PostMapping ("/del_student")
-    public String del_student(@RequestBody long id,
+    public String del_student(@RequestHeader("Authorization") String token,@RequestBody long id,
                               BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

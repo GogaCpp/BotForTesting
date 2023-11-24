@@ -21,17 +21,17 @@ public class DisciplineController {
     private DisciplinesToCollectionsRepository DisciplinesToCollectionsRepository;
 
     @GetMapping("/disciplines")
-    public List<Discipline> view_disciplines() {
+    public List<Discipline> view_disciplines(@RequestHeader("Authorization") String token) {
         return DisciplineRepository.findAll();
     }
 
     @PostMapping("/discipline_by_id")
-    public Optional<Discipline> discipline_by_id(@RequestBody long id) {
+    public Optional<Discipline> discipline_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return DisciplineRepository.findById(id);
     }
 
     @PostMapping("/add_discipline")
-    public String add_discipline(@RequestBody Discipline discipline,
+    public String add_discipline(@RequestHeader("Authorization") String token,@RequestBody Discipline discipline,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -41,7 +41,7 @@ public class DisciplineController {
     }
 
     @PostMapping("/add_discipline_to_collection")
-    public String add_discipline_to_collection(@RequestBody DisciplinesToCollections disciplinesToCollections,
+    public String add_discipline_to_collection(@RequestHeader("Authorization") String token,@RequestBody DisciplinesToCollections disciplinesToCollections,
                                              BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -51,7 +51,7 @@ public class DisciplineController {
     }
 
     @PostMapping ("/del_discipline")
-    public String del_discipline(@RequestBody long id,
+    public String del_discipline(@RequestHeader("Authorization") String token,@RequestBody long id,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -61,7 +61,7 @@ public class DisciplineController {
     }
 
     @PostMapping ("/del_discipline_to_collection")
-    public String del_discipline_to_collection(@RequestBody DisciplinesToCollections dtc,
+    public String del_discipline_to_collection(@RequestHeader("Authorization") String token,@RequestBody DisciplinesToCollections dtc,
                                              BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

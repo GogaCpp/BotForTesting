@@ -112,8 +112,14 @@ CREATE TABLE IF NOT EXISTS allData.disciplines_to_collection(
 );
 /*многие ко многим тесты и группы тестов*/
 CREATE TABLE IF NOT EXISTS allData.tests_to_groups(
-                                                      id BIGSERIAL PRIMARY KEY,
-                                                      group_id BIGINT not null,
-                                                      test_id BIGINT not null,
-                                                      count_questions BIGINT not null
+    id BIGSERIAL PRIMARY KEY,
+    group_id BIGINT not null,
+    test_id BIGINT not null,
+    count_questions BIGINT not null
+);
+
+CREATE TABLE IF NOT EXISTS allData.refresh_tokens(
+      id BIGSERIAL PRIMARY KEY,
+      token TEXT not null,
+      login TEXT not null
 );

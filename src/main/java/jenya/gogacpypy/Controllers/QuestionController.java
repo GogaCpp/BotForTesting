@@ -17,17 +17,17 @@ public class QuestionController {
     private QuestionRepository QuestionRepository;
 
     @GetMapping("/questions")
-    public List<Question> view_questions() {
+    public List<Question> view_questions(@RequestHeader("Authorization") String token) {
         return QuestionRepository.findAll();
     }
 
     @PostMapping("/question_by_id")
-    public Optional<Question> question_by_id(@RequestBody long id) {
+    public Optional<Question> question_by_id(@RequestHeader("Authorization") String token, @RequestBody long id) {
         return QuestionRepository.findById(id);
     }
 
     @PostMapping ("/add_question")
-    public String add_question(@RequestBody Question question,
+    public String add_question(@RequestHeader("Authorization") String token,@RequestBody Question question,
                                BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -37,7 +37,7 @@ public class QuestionController {
     }
 
     @PostMapping ("/del_question")
-    public String del_question(@RequestBody long id,
+    public String del_question(@RequestHeader("Authorization") String token,@RequestBody long id,
                                BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

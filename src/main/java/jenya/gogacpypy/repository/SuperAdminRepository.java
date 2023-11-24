@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface SuperAdminRepository extends JpaRepository<SuperAdmin, Long> {
     Optional<SuperAdmin> findFirstByLoginAndPass(String login, String pass);
+
+    Optional<SuperAdmin> findFirstByLogin(String login);
 }

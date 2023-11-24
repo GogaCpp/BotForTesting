@@ -20,27 +20,27 @@ public class TestController {
     private TestsToGroupsRepository TestsToGroupsRepository;
 
     @GetMapping("/tests")
-    public List<Test> view_groups() {
+    public List<Test> view_groups(@RequestHeader("Authorization") String token) {
         return TestRepository.findAll();
     }
 
     @PostMapping("/test_by_id")
-    public Optional<Test> test_by_id(@RequestBody long id) {
+    public Optional<Test> test_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return TestRepository.findById(id);
     }
 
     @PostMapping("/tests_to_groups")
-    public List<TestsToGroups> view_tests_to_groups(@RequestBody Test test) {
+    public List<TestsToGroups> view_tests_to_groups(@RequestHeader("Authorization") String token,@RequestBody Test test) {
         return TestsToGroupsRepository.findByTest(test);
     }
 
     @PostMapping("/tests_to_groups_by_test_id")
-    public List<TestsToGroups> view_tests_to_groups_by_test_id(@RequestBody long id) {
+    public List<TestsToGroups> view_tests_to_groups_by_test_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return TestsToGroupsRepository.findByTestId(id);
     }
 
     @PostMapping("/add_test")
-    public String add_test(@RequestBody Test test,
+    public String add_test(@RequestHeader("Authorization") String token,@RequestBody Test test,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -50,7 +50,7 @@ public class TestController {
     }
 
     @PostMapping("/add_test_to_group")
-    public String add_test_to_group(@RequestBody TestsToGroups testsToGroups,
+    public String add_test_to_group(@RequestHeader("Authorization") String token,@RequestBody TestsToGroups testsToGroups,
                                         BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -60,7 +60,7 @@ public class TestController {
     }
 
     @PostMapping ("/del_test")
-    public String del_test(@RequestBody long id,
+    public String del_test(@RequestHeader("Authorization") String token,@RequestBody long id,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -70,7 +70,7 @@ public class TestController {
     }
 
     @PostMapping ("/del_test_to_group")
-    public String del_test_to_group(@RequestBody long id,
+    public String del_test_to_group(@RequestHeader("Authorization") String token,@RequestBody long id,
                                         BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

@@ -15,12 +15,12 @@ public class UniversityController {
     private jenya.gogacpypy.repository.UniversityRepository UniversityRepository;
 
     @GetMapping("/universities")
-    public List<University> view_universities() {
+    public List<University> view_universities(@RequestHeader("Authorization") String token) {
         return UniversityRepository.findAll();
     }
 
     @PostMapping("/add_university")
-    public String add_university(@RequestBody University university,
+    public String add_university(@RequestHeader("Authorization") String token, @RequestBody University university,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -30,7 +30,7 @@ public class UniversityController {
     }
 
     @PostMapping ("/del_university")
-    public String del_university(@RequestBody long id,
+    public String del_university(@RequestHeader("Authorization") String token, @RequestBody long id,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Optional<Teacher> findFirstByLoginAndPass(String login, String pass);
+
+    Optional<Teacher> findFirstByLogin(String login);
 }

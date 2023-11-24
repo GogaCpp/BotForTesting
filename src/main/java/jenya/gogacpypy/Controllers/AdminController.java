@@ -15,12 +15,12 @@ public class AdminController {
     private AdminRepository AdminRepository;
 
     @GetMapping("/admins")
-    public List<Admin> view_admins() {
+    public List<Admin> view_admins(@RequestHeader("Authorization") String token) {
         return AdminRepository.findAll();
     }
 
     @PostMapping("/add_admin")
-    public String add_admin(@RequestBody Admin admin,
+    public String add_admin(@RequestHeader("Authorization") String token,@RequestBody Admin admin,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -30,7 +30,7 @@ public class AdminController {
     }
 
     @PostMapping ("/del_admin")
-    public String del_admin(@RequestBody long id,
+    public String del_admin(@RequestHeader("Authorization") String token, @RequestBody long id,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

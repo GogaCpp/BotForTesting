@@ -21,17 +21,17 @@ public class CollectionController {
     private CollectionsToQuestionsRepository CollectionsToQuestionsRepository;
 
     @GetMapping("/collections")
-    public List<Collection> view_collections() {
+    public List<Collection> view_collections(@RequestHeader("Authorization") String token) {
         return CollectionRepository.findAll();
     }
 
     @PostMapping("/collection_by_id")
-    public Optional<Collection> collection_by_id(@RequestBody long id) {
+    public Optional<Collection> collection_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return CollectionRepository.findById(id);
     }
 
     @PostMapping("/add_collection")
-    public String add_collection(@RequestBody Collection collection,
+    public String add_collection(@RequestHeader("Authorization") String token, @RequestBody Collection collection,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -41,7 +41,7 @@ public class CollectionController {
     }
 
     @PostMapping("/add_collection_to_question")
-    public String add_collection_to_question(@RequestBody CollectionsToQuestions collectionsToQuestions,
+    public String add_collection_to_question(@RequestHeader("Authorization") String token,@RequestBody CollectionsToQuestions collectionsToQuestions,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -51,7 +51,7 @@ public class CollectionController {
     }
 
     @PostMapping ("/del_collection")
-    public String del_collection(@RequestBody long id,
+    public String del_collection(@RequestHeader("Authorization") String token,@RequestBody long id,
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -61,7 +61,7 @@ public class CollectionController {
     }
 
     @PostMapping ("/del_collection_to_question")
-    public String del_collection_to_question(@RequestBody CollectionsToQuestions ctq,
+    public String del_collection_to_question(@RequestHeader("Authorization") String token,@RequestBody CollectionsToQuestions ctq,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";

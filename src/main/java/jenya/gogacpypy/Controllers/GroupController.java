@@ -25,17 +25,17 @@ public class GroupController {
     }
 
     @PostMapping("/group_by_id")
-    public Optional<Group> group_by_id(@RequestBody long id) {
+    public Optional<Group> group_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return GroupRepository.findById(id);
     }
 
     @PostMapping("/groups_by_collection_id")
-    public List<Group> groups_by_collection_id(@RequestBody long id) {
+    public List<Group> groups_by_collection_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
         return GroupRepository.findByCollectionId(id);
     }
 
     @PostMapping("/add_group")
-    public String add_group(@RequestBody Group group,
+    public String add_group(@RequestHeader("Authorization") String token,@RequestBody Group group,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -45,7 +45,7 @@ public class GroupController {
     }
 
     @PostMapping("/add_group_to_question")
-    public String add_group_to_question(@RequestBody GroupsToQuestions groupsToQuestions,
+    public String add_group_to_question(@RequestHeader("Authorization") String token,@RequestBody GroupsToQuestions groupsToQuestions,
                                                BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -55,7 +55,7 @@ public class GroupController {
     }
 
     @PostMapping ("/del_group")
-    public String del_group(@RequestBody long id,
+    public String del_group(@RequestHeader("Authorization") String token,@RequestBody long id,
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
@@ -65,7 +65,7 @@ public class GroupController {
     }
 
     @PostMapping ("/del_group_to_question")
-    public String del_group_to_question(@RequestBody GroupsToQuestions gtq,
+    public String del_group_to_question(@RequestHeader("Authorization") String token,@RequestBody GroupsToQuestions gtq,
                                                BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
