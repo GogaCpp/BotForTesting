@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS allData.students_answers(
     id BIGSERIAL PRIMARY KEY,
     student_id BIGINT not null,
     question_id BIGINT not null,
-    name TEXT,
+    answer_id BIGINT not null,
     time_start timestamp,
     time_end timestamp,
     test_id BIGINT not null
@@ -124,3 +124,18 @@ CREATE TABLE IF NOT EXISTS allData.refresh_tokens(
     token TEXT not null,
     login TEXT not null
 );
+
+
+CREATE OR REPLACE Procedure init()
+AS '
+    DECLARE
+        n integer;
+    BEGIN
+        select * into n from allData.super_admin;
+        IF  n=0  THEN
+            insert into allData.super_admin(login, pass) VALUES (''admin'',''admin'');
+        END IF;
+    END;
+' LANGUAGE plpgsql;
+
+call init();

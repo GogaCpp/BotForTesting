@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name="students", schema = "alldata")
 @Data
 public class Student {
@@ -23,11 +24,12 @@ public class Student {
     @Column(name = "groupname")
     private String group;
 
-    @Column(name="chat_id")
+    @Column
     private long chatId;
 
     @Column(name="university_id")
-    private long universityId;
+
+    private Long universityId;
 
     public Student(String name, String group,long chatId,long universityId) {
 

@@ -16,7 +16,7 @@ public class University {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="name")
+    @Column
     private String name;
 
     public University(String name){

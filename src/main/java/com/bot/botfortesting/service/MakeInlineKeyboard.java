@@ -120,12 +120,7 @@ public class MakeInlineKeyboard {
                 }
             }
 
-
-            
-
             List<InlineKeyboardButton> row = new ArrayList<>();
-
-
             row.add(tempButton);
             rowsInLIne.add(row);
         }
@@ -138,25 +133,22 @@ public class MakeInlineKeyboard {
 
 
         List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
-
-
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
         for (Answer answer:answers) {
             var tempButton=new InlineKeyboardButton();
 
             tempButton.setText(answer.getName());
+            tempButton.setCallbackData("MCQ"+answer.getName());
             for (CurrentAnswer currentAnswer: currentAnswers) {
                 if(question.getId()==currentAnswer.getQuestionId() && answer.getId()==currentAnswer.getAnswerId()&& currentAnswer.getChatId()==chatId){
                     tempButton.setText(answer.getName()+"✅");
-
+                    tempButton.setCallbackData("MCQ"+answer.getName()+"✅");
                 }
             }
-            tempButton.setText(answer.getName());
-            tempButton.setCallbackData("MHQ"+answer.getName());
+
+
             List<InlineKeyboardButton> row = new ArrayList<>();
-
-
             row.add(tempButton);
             rowsInLIne.add(row);
         }
@@ -196,9 +188,16 @@ public class MakeInlineKeyboard {
         right.setText("->");
         right.setCallbackData("GORIGHTPAGETEST");
 
+        var save=new InlineKeyboardButton();
+        save.setText("Сохранить тест");
+        save.setCallbackData("SAVETEST");
+        List<InlineKeyboardButton> saveRow=new ArrayList<>();
+        saveRow.add(save);
+
         row.add(left);
         row.add(right);
         rowsInLIne.add(row);
+        rowsInLIne.add(saveRow);
         markupInLine.setKeyboard(rowsInLIne);
 
         return markupInLine;

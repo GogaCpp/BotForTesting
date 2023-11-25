@@ -68,6 +68,8 @@ public class MainBot extends TelegramLongPollingBot{
     private GroupRepository groupRepository;
     @Autowired
     private QuestionsToGroupsRepository questionsToGroupsRepository;
+    @Autowired
+    private StudentAnswerRepository studentAnswerRepository;
 
 
     public MainBot(BotConfig config){
@@ -104,6 +106,7 @@ public class MainBot extends TelegramLongPollingBot{
             switch (messageText) {
                 case "/start" -> startBot(chatId);
                 case "/test" -> {
+                    startBot(chatId);
                     if(operationStatus.get(chatId)==OperationStatus.Testing){
                         simpleSend(chatId,"Завершите прошлый тест");
                         break;
@@ -128,6 +131,25 @@ public class MainBot extends TelegramLongPollingBot{
             }
             if(callbackData.startsWith("SCQ")){
                 String parameters = callbackData.substring("SCQ".length());
+
+                deletAllGalochka(chatId,questionsInTest.get(chatId).get(testPage.get(chatId)).getId());
+
+//                if(callbackData.endsWith("✅"))
+//                {
+//                    String endParameters= parameters.substring(0, parameters.length() - 1);
+//                    Answer answer=answerRepository.getAnswerByNameAndQuestionId(endParameters,questionsInTest.get(chatId).get(testPage.get(chatId)).getId());
+//                    makeInlineKeyboard.currentAnswers.remove(new CurrentAnswer(questionsInTest.get(chatId).get(testPage.get(chatId)).getId(),answer.getId(),chatId));
+//                    changePageQuestion(chatId, messageId);
+//                    return;
+//                }
+
+
+                Answer answer=answerRepository.getAnswerByNameAndQuestionId(parameters,questionsInTest.get(chatId).get(testPage.get(chatId)).getId());
+                makeInlineKeyboard.currentAnswers.add(new CurrentAnswer(questionsInTest.get(chatId).get(testPage.get(chatId)).getId(),answer.getId(),chatId));
+                changePageQuestion(chatId, messageId);
+            }
+            if(callbackData.startsWith("MCQ")){
+                String parameters = callbackData.substring("MCQ".length());
                 if(callbackData.endsWith("✅"))
                 {
                     String endParameters= parameters.substring(0, parameters.length() - 1);
@@ -206,6 +228,20 @@ public class MainBot extends TelegramLongPollingBot{
                     }
 
                 }
+                case "SAVETEST"->{
+                    Student student=studentRepository.findByChatId(chatId);
+
+                    for (CurrentAnswer currentAnswer :makeInlineKeyboard.currentAnswers) {
+                        StudentAnswer studentAnswer=StudentAnswer.builder().studentsId(student.getId())
+                                .answerId(currentAnswer.getAnswerId())
+                                .questionId(currentAnswer.getQuestionId())
+                                .build();
+
+                        studentAnswerRepository.save(studentAnswer);
+                    }
+                    operationStatus.put(chatId,OperationStatus.Authorized);
+                    deletInlineKeyboard(chatId,messageId,"Тест завершен");
+                }
 
                 default -> {
                     log.info("CallbackData is "+callbackData);
@@ -213,6 +249,14 @@ public class MainBot extends TelegramLongPollingBot{
             }
 
         }
+    }
+
+    public void deletAllGalochka(long chatId,long questionId) {
+        List<Answer> answers=answerRepository.findAnswerByQuestionId(questionId);
+        for (Answer answer:answers) {
+            makeInlineKeyboard.currentAnswers.remove(new CurrentAnswer(questionId,answer.getId(),chatId));
+        }
+
     }
     public void data(){
         Question q1=new Question("Вопрос 1","SingleChoice");
@@ -233,9 +277,12 @@ public class MainBot extends TelegramLongPollingBot{
         testRepository.save(test);
         TestsToGroups ttg=new TestsToGroups(g1.getId(),test.getId(),2);
         testsToGroupsRepository.save(ttg);
-        answerRepository.save(new Answer("Ответ1Вопрос1",true,q1.getId()));
-        answerRepository.save(new Answer("Ответ2Вопрос1",false,q1.getId()));
-        answerRepository.save(new Answer("Ответ3Вопрос1",false,q1.getId()));
+        answerRepository.save(new Answer("Ответ1Вопрос1",true,q1));
+        answerRepository.save(new Answer("Ответ2Вопрос1",false,q1));
+        answerRepository.save(new Answer("Ответ3Вопрос1",false,q1));
+        answerRepository.save(new Answer("Ответ1Вопрос2",true,q2));
+        answerRepository.save(new Answer("Ответ2Вопрос2",false,q2));
+        answerRepository.save(new Answer("Ответ3Вопрос2",false,q2));
         for(int i=0;i<13;i++)
         {
             University un=new University("Unik "+String.valueOf(i));

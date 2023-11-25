@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -22,6 +23,9 @@ public class Question {
 
     @Column(name="type")
     private String type;
+
+    @OneToMany(mappedBy = "question",fetch = FetchType.EAGER)
+    private Set<Answer> answers;
 
 
     public Question(String name,String type){

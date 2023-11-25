@@ -2,6 +2,7 @@ package com.bot.botfortesting.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.sql.Date;
 @Entity
 @Table(name="students_answers", schema = "alldata")
 @Data
+@Builder
 public class StudentAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +25,8 @@ public class StudentAnswer {
     @Column(name = "question_id")
     private long questionId;
 
-    @Column(name="name")
-    private String name;
+
+    private long answerId;
 
     @Column(name="time_start")
     private Date timeStart;
