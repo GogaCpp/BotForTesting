@@ -1,9 +1,13 @@
 package jenya.gogacpypy.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jenya.gogacpypy.Utils.JWTProvider;
 import jenya.gogacpypy.model.Discipline;
 import jenya.gogacpypy.model.DisciplinesToCollections;
 import jenya.gogacpypy.repository.DisciplineRepository;
 import jenya.gogacpypy.repository.DisciplinesToCollectionsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +17,31 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class DisciplineController {
 
     @Autowired
     private DisciplineRepository DisciplineRepository;
     @Autowired
     private DisciplinesToCollectionsRepository DisciplinesToCollectionsRepository;
+    private final JWTProvider jwtProvider;
+    private final int levelAccess = 1;
+    private final ObjectMapper mapper;
 
     @GetMapping("/disciplines")
-    public List<Discipline> view_disciplines(@RequestHeader("Authorization") String token) {
-        return DisciplineRepository.findAll();
+    public String view_disciplines(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
+        return mapper.writeValueAsString(DisciplineRepository.findAll());
     }
 
     @PostMapping("/discipline_by_id")
-    public Optional<Discipline> discipline_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
-        return DisciplineRepository.findById(id);
+    public String discipline_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) throws JsonProcessingException {
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
+        return mapper.writeValueAsString(DisciplineRepository.findById(id));
     }
 
     @PostMapping("/add_discipline")
@@ -35,6 +49,9 @@ public class DisciplineController {
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
+        }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         DisciplineRepository.save(discipline);
         return "{\"res\":\"Success\"}";
@@ -46,6 +63,9 @@ public class DisciplineController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
         DisciplinesToCollectionsRepository.save(disciplinesToCollections);
         return "{\"res\":\"Success\"}";
     }
@@ -56,6 +76,9 @@ public class DisciplineController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
         DisciplineRepository.deleteById(id);
         return "{\"res\":\"Success\"}";
     }
@@ -65,6 +88,9 @@ public class DisciplineController {
                                              BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
+        }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         List<DisciplinesToCollections> a = DisciplinesToCollectionsRepository.findByCollectionIdAndDisciplineId(dtc.getCollectionId(), dtc.getDisciplineId());
         for (DisciplinesToCollections i:

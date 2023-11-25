@@ -23,5 +23,6 @@ public class Question {
     @Column(name="type")
     private String type;
 
-
+    @Column(name="is_valid")
+    private boolean isValid;
 }

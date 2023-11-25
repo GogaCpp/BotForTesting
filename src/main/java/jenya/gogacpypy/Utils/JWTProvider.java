@@ -68,6 +68,14 @@ public class JWTProvider {
         return validateToken(refreshToken, jwtRefreshSecret);
     }
 
+    public boolean checkAccess(String token, int roleLevel) {
+        if (token != null && validateAccessToken(token)) {
+            int role = getAccessClaims(token).get("role",Integer.class);
+            return role >= roleLevel;
+        }
+        return false;
+    }
+
     private boolean validateToken(@NonNull String token, @NonNull Key secret) {
         try {
             Jwts.parserBuilder()

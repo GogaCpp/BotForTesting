@@ -1,6 +1,7 @@
 package jenya.gogacpypy.Controllers;
 
-import io.jsonwebtoken.Claims;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jenya.gogacpypy.Utils.JWTProvider;
 import jenya.gogacpypy.model.SuperAdmin;
 import jenya.gogacpypy.repository.SuperAdminRepository;
@@ -20,15 +21,14 @@ public class SuperAdminController {
     @Autowired
     private SuperAdminRepository SuperAdminRepository;
     private final JWTProvider jwtProvider;
+    private final int levelAccess = 3;
+    private final ObjectMapper mapper;
     @GetMapping("/super_admins")
-    public List<SuperAdmin> view_super_admins(@RequestHeader("Authorization") String token) {
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-            final int role = jwtProvider.getAccessClaims(token).get("role",Integer.class);
-            if(role<3){
-                return null;
-            }
+    public String view_super_admins(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
-        return SuperAdminRepository.findAll();
+        return mapper.writeValueAsString(SuperAdminRepository.findAll());
     }
 
     @PostMapping("/add_super_admin")
@@ -37,11 +37,8 @@ public class SuperAdminController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-            final int role = jwtProvider.getAccessClaims(token).get("role",Integer.class);
-            if(role<3){
-                return null;
-            }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         SuperAdminRepository.save(superAdmin);
         return "{\"res\":\"Success\"}";
@@ -53,11 +50,8 @@ public class SuperAdminController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-            final int role = jwtProvider.getAccessClaims(token).get("role",Integer.class);
-            if(role<3){
-                return null;
-            }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         SuperAdminRepository.deleteById(id);
         return "{\"res\":\"Success\"}";

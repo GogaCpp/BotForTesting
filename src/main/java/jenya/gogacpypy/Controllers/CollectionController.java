@@ -1,9 +1,13 @@
 package jenya.gogacpypy.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jenya.gogacpypy.Utils.JWTProvider;
 import jenya.gogacpypy.model.Collection;
 import jenya.gogacpypy.model.CollectionsToQuestions;
 import jenya.gogacpypy.repository.CollectionRepository;
 import jenya.gogacpypy.repository.CollectionsToQuestionsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +17,31 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class CollectionController {
 
     @Autowired
     private CollectionRepository CollectionRepository;
     @Autowired
     private CollectionsToQuestionsRepository CollectionsToQuestionsRepository;
+    private final JWTProvider jwtProvider;
+    private final ObjectMapper mapper;
+    private final int levelAccess = 1;
 
     @GetMapping("/collections")
-    public List<Collection> view_collections(@RequestHeader("Authorization") String token) {
-        return CollectionRepository.findAll();
+    public String view_collections(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
+        return mapper.writeValueAsString(CollectionRepository.findAll());
     }
 
     @PostMapping("/collection_by_id")
-    public Optional<Collection> collection_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) {
-        return CollectionRepository.findById(id);
+    public String collection_by_id(@RequestHeader("Authorization") String token,@RequestBody long id) throws JsonProcessingException {
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
+        return mapper.writeValueAsString(CollectionRepository.findById(id));
     }
 
     @PostMapping("/add_collection")
@@ -35,6 +49,9 @@ public class CollectionController {
                             BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
+        }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         CollectionRepository.save(collection);
         return "{\"res\":\"Success\"}";
@@ -46,6 +63,9 @@ public class CollectionController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
         CollectionsToQuestionsRepository.save(collectionsToQuestions);
         return "{\"res\":\"Success\"}";
     }
@@ -56,6 +76,9 @@ public class CollectionController {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
         }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
         CollectionRepository.deleteById(id);
         return "{\"res\":\"Success\"}";
     }
@@ -65,6 +88,9 @@ public class CollectionController {
                                  BindingResult result) {
         if (result.hasErrors()) {
             return "{\"res\":\"Have an error\"}";
+        }
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
         }
         List<CollectionsToQuestions> a = CollectionsToQuestionsRepository.findByCollectionIdAndQuestionId(ctq.getCollectionId(), ctq.getQuestionId());
         for (CollectionsToQuestions i:
