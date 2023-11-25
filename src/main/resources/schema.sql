@@ -23,13 +23,13 @@ CREATE TABLE IF NOT EXISTS allData.students_answers(
 /* ВУЗ*/
 CREATE TABLE IF NOT EXISTS allData.universities(
     id BIGSERIAL PRIMARY KEY,
-    name TEXT
+    name TEXT UNIQUE
 );
 /*Админ*/
 CREATE TABLE IF NOT EXISTS allData.admins(
     id BIGSERIAL PRIMARY KEY,
-    name TEXT,
-    login TEXT,
+    name TEXT UNIQUE,
+    login TEXT UNIQUE,
     pass TEXT,
     university_id BIGINT not null
 );
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS allData.admins(
 CREATE TABLE IF NOT EXISTS allData.teachers(
     id BIGSERIAL PRIMARY KEY,
     name TEXT,
-    login TEXT,
+    login TEXT UNIQUE,
     pass TEXT,
     tg_account TEXT,
     university_id BIGINT not null
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS allData.teachers(
 /* Гига админ*/
 CREATE TABLE IF NOT EXISTS allData.super_admin(
     id BIGSERIAL PRIMARY KEY,
-    login TEXT,
+    login TEXT UNIQUE,
     pass TEXT
 );
 
@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS allData.super_admin(
 CREATE TABLE IF NOT EXISTS allData.questions (
     id BIGSERIAL PRIMARY KEY,
     name TEXT,
-    type TEXT
+    type TEXT,
+    is_valid BOOLEAN
 );
 /* ответы*/
 CREATE TABLE IF NOT EXISTS allData.answers(

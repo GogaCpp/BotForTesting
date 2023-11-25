@@ -27,6 +27,8 @@ public class Question {
     @OneToMany(mappedBy = "question",fetch = FetchType.EAGER)
     private Set<Answer> answers;
 
+    Boolean isValid;
+
 
     public Question(String name,String type){
         this.name =name;
