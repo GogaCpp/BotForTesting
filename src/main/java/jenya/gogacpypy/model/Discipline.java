@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class Discipline {
     @Column(name="name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -29,5 +31,6 @@ public class Discipline {
     @JoinTable(name = "disciplines_to_collection", schema = "alldata",
             joinColumns = { @JoinColumn(name = "discipline_id") },
             inverseJoinColumns = { @JoinColumn(name = "collection_id") })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Collection> collections;
 }

@@ -2,6 +2,8 @@ package jenya.gogacpypy.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,15 +27,7 @@ public class Student {
 
     @ManyToOne
     @JoinColumn(name="university_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private University university;
 
-    public Student(String name, long chatId) {
-
-        this.name = name;
-        this.chatId=chatId;
-    }
-    public Student(String name ) {
-
-        this.name = name;
-    }
 }

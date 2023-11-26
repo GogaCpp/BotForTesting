@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,17 +26,39 @@ public class Collection {
     @Column(name="name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @JsonIgnoreProperties(value = {"collections"}, allowSetters = true)
+    @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
             })
     @JoinTable(name = "collections_to_questions", schema = "alldata",
             joinColumns = { @JoinColumn(name = "collection_id") },
             inverseJoinColumns = { @JoinColumn(name = "question_id") })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Question> questions;
 
-//    @JsonIgnoreProperties("collection")
-//    @OneToMany(mappedBy = "collection")
-//    private List<Group> groups;
+    @JsonIgnoreProperties(value = {"collections"}, allowSetters = true)
+    @ManyToMany(
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
+    @JoinTable(name = "disciplines_to_collections", schema = "alldata",
+            joinColumns = { @JoinColumn(name = "collection_id") },
+            inverseJoinColumns = { @JoinColumn(name = "discipline_id") })
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Discipline> disciplines;
+
+    @JsonIgnoreProperties(value = {"collection"}, allowSetters = true)
+    @OneToMany(mappedBy = "collection")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Group> groups;
+
+    @JsonIgnoreProperties(value = {"collection"}, allowSetters = true)
+    @OneToMany(mappedBy = "collection")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Test> tests;
 }

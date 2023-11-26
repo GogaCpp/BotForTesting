@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -24,20 +26,32 @@ public class Group {
 //    @Column(name="collection_id",insertable=false, updatable=false)
 //    private long collectionId;
 
-//    @JsonIgnoreProperties("groups")
+
     @ManyToOne
     @JoinColumn(name = "collection_id")
     private Collection collection;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
+    @JsonIgnoreProperties(value = {"groups"}, allowSetters = true)
+    @ManyToMany(cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             })
-    @JoinTable(name = "questions_to_group", schema = "alldata",
+    @JoinTable(name = "groups_to_questions", schema = "alldata",
             joinColumns = { @JoinColumn(name = "group_id") },
             inverseJoinColumns = { @JoinColumn(name = "question_id") })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Question> questions;
+
+//    @JsonIgnoreProperties(value = {"groups"}, allowSetters = true)
+//    @ManyToMany(cascade = {
+//                    CascadeType.PERSIST,
+//                    CascadeType.MERGE
+//            })
+//    @JoinTable(name = "tests_to_groups", schema = "alldata",
+//            joinColumns = { @JoinColumn(name = "group_id") },
+//            inverseJoinColumns = { @JoinColumn(name = "test_id") })
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private List<Test> tests;
 
 
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,5 +34,6 @@ public class Teacher {
 
     @ManyToOne
     @JoinColumn(name="university_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private University university;
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="disciplines_to_collection", schema = "alldata")
+@Table(name="disciplines_to_collections", schema = "alldata")
 @Data
 public class DisciplinesToCollections {
     @Id

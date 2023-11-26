@@ -28,7 +28,7 @@ public class AnswerController {
         if (!jwtProvider.checkAccess(token,levelAccess)) {
             return "{\"res\":\"Access denied\"}";
         }
-        return mapper.writeValueAsString(AnswerRepository.findByQuestionId(question_id));
+        return mapper.writeValueAsString(AnswerRepository.findAllByQuestionId(question_id));
     }
 
     @PostMapping ("/add_answer")

@@ -88,21 +88,18 @@ public class GogacpypyApplication {
                 if(t.isPresent()){
                     User user = new User(t.get().getLogin(),t.get().getPass(),1);
                     String accessToken = jwtProvider.generateAccessToken(user);
-                    System.out.println("Refreshed");
                     return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
                 }
                 Optional<Admin> a = AdminRepository.findFirstByLogin(login);
                 if(a.isPresent()){
                     User user = new User(a.get().getLogin(),a.get().getPass(),2);
                     String accessToken = jwtProvider.generateAccessToken(user);
-                    System.out.println("Refreshed");
                     return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
                 }
                 Optional<SuperAdmin> s = SuperAdminRepository.findFirstByLogin(login);
                 if(s.isPresent()){
                     User user = new User(s.get().getLogin(),s.get().getPass(),3);
                     String accessToken = jwtProvider.generateAccessToken(user);
-                    System.out.println("Refreshed");
                     return mapper.writeValueAsString(new JWTResponse(accessToken, refreshToken));
                 }
                 return "{\"res\":\"Wrong token\"}";
