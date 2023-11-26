@@ -21,13 +21,14 @@ public class Answer {
     @Column(name="correct")
     private boolean correct;
 
-    @ManyToOne
-    private Question question;
 
-    public Answer(String name,boolean correct,Question question){
+    @Column(name="question_id")
+    private long questionId;
+
+    public Answer(String name,boolean correct,long question){
         this.name=name;
         this.correct=correct;
-        this.question=question;
+        this.questionId=question;
 
     }
 

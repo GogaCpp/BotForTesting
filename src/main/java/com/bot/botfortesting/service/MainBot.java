@@ -21,12 +21,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 
-import java.util.ArrayList;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
@@ -48,6 +49,10 @@ public class MainBot extends TelegramLongPollingBot{
     HashMap<Long, Integer> testPage= new HashMap<>();
     //List<Question> questionsInTest=new ArrayList<>();
     HashMap<Long, List<Question  >>questionsInTest=new HashMap<>();
+    HashMap<Long,Long> testNow=new HashMap<>();
+    HashMap<Long,LocalDateTime> timeStartTest=new HashMap<>();
+    HashMap<Long,LocalDateTime> timeEndTest=new HashMap<>();
+
 
     MakeInlineKeyboard makeInlineKeyboard=new MakeInlineKeyboard();
 
@@ -79,6 +84,7 @@ public class MainBot extends TelegramLongPollingBot{
         List<BotCommand> listOfCommands=new ArrayList<>();
         listOfCommands.add(new BotCommand("/start","Старт"));
         listOfCommands.add(new BotCommand("/test","Тестирование"));
+        listOfCommands.add(new BotCommand("/result","Результаты предыдущего теста"));
         try {
             this.execute(new SetMyCommands(listOfCommands,new BotCommandScopeDefault(),null));
         }
@@ -103,17 +109,30 @@ public class MainBot extends TelegramLongPollingBot{
 
             long chatId = update.getMessage().getChatId();
 
+            if (messageText.startsWith("/start ")){
+                startBot(chatId);
+                testing(chatId,messageText.substring("/start ".length()));
+                log.info(messageText.substring("/start ".length()));
+                return;
+            }
             switch (messageText) {
                 case "/start" -> startBot(chatId);
+                case "/result"->simpleResult(chatId);
                 case "/test" -> {
                     startBot(chatId);
+
                     if(operationStatus.get(chatId)==OperationStatus.Testing){
                         simpleSend(chatId,"Завершите прошлый тест");
                         break;
                     }
-                    testing(chatId,"123");
+                    if(operationStatus.get(chatId)==OperationStatus.Authorized)
+                        testing(chatId,"123");
                 }
-                default -> lookStatus(chatId,messageText);
+
+                default ->{
+                    log.info(messageText);
+                    lookStatus(chatId,messageText);
+                }
             }
         }
         else if(update.hasCallbackQuery()){
@@ -231,10 +250,13 @@ public class MainBot extends TelegramLongPollingBot{
                 case "SAVETEST"->{
                     Student student=studentRepository.findByChatId(chatId);
 
+                    timeEndTest.put(chatId,LocalDateTime.now());
                     for (CurrentAnswer currentAnswer :makeInlineKeyboard.currentAnswers) {
                         StudentAnswer studentAnswer=StudentAnswer.builder().studentsId(student.getId())
                                 .answerId(currentAnswer.getAnswerId())
                                 .questionId(currentAnswer.getQuestionId())
+                                .timeEnd(timeEndTest.get(chatId))
+                                .timeStart(timeStartTest.get(chatId))
                                 .build();
 
                         studentAnswerRepository.save(studentAnswer);
@@ -252,11 +274,14 @@ public class MainBot extends TelegramLongPollingBot{
     }
 
     public void deletAllGalochka(long chatId,long questionId) {
-        List<Answer> answers=answerRepository.findAnswerByQuestionId(questionId);
+        List<Answer> answers=answerRepository.findAnswersByQuestionId(questionId);
         for (Answer answer:answers) {
             makeInlineKeyboard.currentAnswers.remove(new CurrentAnswer(questionId,answer.getId(),chatId));
         }
 
+    }
+    public String makeTestLink(String testName){
+        return "https://t.me/DubnaTestBot?start="+testName;
     }
     public void data(){
         Question q1=new Question("Вопрос 1","SingleChoice");
@@ -277,12 +302,12 @@ public class MainBot extends TelegramLongPollingBot{
         testRepository.save(test);
         TestsToGroups ttg=new TestsToGroups(g1.getId(),test.getId(),2);
         testsToGroupsRepository.save(ttg);
-        answerRepository.save(new Answer("Ответ1Вопрос1",true,q1));
-        answerRepository.save(new Answer("Ответ2Вопрос1",false,q1));
-        answerRepository.save(new Answer("Ответ3Вопрос1",false,q1));
-        answerRepository.save(new Answer("Ответ1Вопрос2",true,q2));
-        answerRepository.save(new Answer("Ответ2Вопрос2",false,q2));
-        answerRepository.save(new Answer("Ответ3Вопрос2",false,q2));
+        answerRepository.save(new Answer("Ответ1Вопрос1",true,q1.getId()));
+        answerRepository.save(new Answer("Ответ2Вопрос1",false,q1.getId()));
+        answerRepository.save(new Answer("Ответ3Вопрос1",false,q1.getId()));
+        answerRepository.save(new Answer("Ответ1Вопрос2",true,q2.getId()));
+        answerRepository.save(new Answer("Ответ2Вопрос2",false,q2.getId()));
+        answerRepository.save(new Answer("Ответ3Вопрос2",false,q2.getId()));
         for(int i=0;i<13;i++)
         {
             University un=new University("Unik "+String.valueOf(i));
@@ -387,6 +412,7 @@ public class MainBot extends TelegramLongPollingBot{
 
     }
     private void testing(long chatId,String testName) {
+         timeStartTest.put(chatId,LocalDateTime.now());
         operationStatus.put(chatId,OperationStatus.Testing);
         Test test=testRepository.findByName(testName);
         if(test != null)
@@ -403,8 +429,11 @@ public class MainBot extends TelegramLongPollingBot{
 
 
     }
+
+    //rework this Func
     private  void goTest(long chatId,Test test){
 
+        timeStartTest.put(chatId,LocalDateTime.now());
 
         List<TestsToGroups> testsToGroups= testsToGroupsRepository.findAllByTestId(test.getId());
         for (TestsToGroups teToGgr: testsToGroups) {
@@ -417,6 +446,7 @@ public class MainBot extends TelegramLongPollingBot{
                 shuffle(questions);
                 questionsInTest.put(chatId, new ArrayList<>());
                 for (int i=0;i<teToGgr.getQuestionsCount();i++){
+                    //ис валид
                     Question qs=questions.get(i);
                     questionsInTest.get(chatId).add(qs);
                 }
@@ -494,5 +524,63 @@ public class MainBot extends TelegramLongPollingBot{
 
     }
 
+    private void simpleResult(long chatId){
+        testNow.get(chatId);
+
+        Duration duration=Duration.between(timeStartTest.get(chatId), timeEndTest.get(chatId));
+        String stDuration="Время прохождения теста:"+duration.toHoursPart()+" часов :"+duration.toMinutesPart()+
+                " минут :"+duration.toSeconds()%60+" секунд";
+
+
+        simpleSend(chatId,"Время прохождения теста: "+stDuration+"\n");
+        for (Question question: questionsInTest.get(chatId)) {
+            if(questionRepository.findById(question.getId()).isPresent()) {
+                Question questionInDB = questionRepository.findById(question.getId()).get();
+
+
+                List<Answer> answersInDB=answerRepository.findAnswersByQuestionIdAndCorrect(questionInDB.getId(),true);
+                List<Long> answerInDBids= new ArrayList<>(answersInDB.stream().map(Answer::getId).toList());
+
+                List<Long> studentAnswerIds=new ArrayList<>();
+                List<String> studentAnswerString=new ArrayList<>();
+                for (CurrentAnswer currentAnswer: makeInlineKeyboard.currentAnswers) {
+                    if(chatId==currentAnswer.getChatId()&& currentAnswer.getQuestionId()==questionInDB.getId()){
+                        studentAnswerIds.add(currentAnswer.getAnswerId());
+                        if( answerRepository.findById(currentAnswer.getAnswerId()).isPresent())
+                            studentAnswerString.add(answerRepository.findById(currentAnswer.getAnswerId()).get().getName());
+
+                    }
+                }
+                Collections.sort(answerInDBids);
+                Collections.sort(studentAnswerIds);
+
+                List<Long> commonElements = new ArrayList<>();
+                for (Long element : answerInDBids) {
+                    if (studentAnswerIds.contains(element)) {
+                        commonElements.add(element);
+                    }
+                }
+                List<String> answerInDBText= new ArrayList<>(answersInDB.stream().map(Answer::getName).toList());
+                StringBuilder mesText= new StringBuilder("Вопрос: \n" + questionInDB.getName() + "\nВаш ответ: \n");
+
+                for (String st:studentAnswerString) {
+                    mesText.append(st).append("\n");
+                }
+                mesText.append("Правльные ответы: \n");
+                for (String st:answerInDBText) {
+                    mesText.append(st).append("\n");
+                }
+                double point=(double) commonElements.size() /answersInDB.size();
+
+
+                mesText.append("Ваш бал за вопрос: ").append(point);
+
+                simpleSend(chatId,mesText.toString());
+
+            }
+
+        }
+
+    }
 
 }

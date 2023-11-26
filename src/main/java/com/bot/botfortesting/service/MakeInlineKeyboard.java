@@ -104,7 +104,7 @@ public class MakeInlineKeyboard {
     {
 
 
-        List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
+        List<Answer> answers=answerRepository.findAnswersByQuestionId(question.getId());
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
         for (Answer answer:answers) {
@@ -132,7 +132,7 @@ public class MakeInlineKeyboard {
     {
 
 
-        List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
+        List<Answer> answers=answerRepository.findAnswersByQuestionId(question.getId());
         List<List<InlineKeyboardButton>> rowsInLIne=new ArrayList<>();
 
         for (Answer answer:answers) {
@@ -159,7 +159,7 @@ public class MakeInlineKeyboard {
         return rowsInLIne;
     }
     public InlineKeyboardMarkup QuestionKeyboardMarkup(Question question, AnswerRepository answerRepository,long chatId){
-        List<Answer> answers=answerRepository.findAnswerByQuestionId(question.getId());
+        List<Answer> answers=answerRepository.findAnswersByQuestionId(question.getId());
 
 
 

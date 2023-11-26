@@ -9,7 +9,8 @@ import java.util.List;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
-    List<Answer> findAnswerByQuestionId(long questionId);
+    List<Answer> findAnswersByQuestionId(long questionId);
+    List<Answer> findAnswersByQuestionIdAndCorrect(long questionId,boolean correct);
 
 
     Answer getAnswerByNameAndQuestionId(String answer,long questionId);

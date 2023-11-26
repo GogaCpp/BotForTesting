@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -23,9 +25,9 @@ public class Question {
 
     @Column(name="type")
     private String type;
-
-    @OneToMany(mappedBy = "question",fetch = FetchType.EAGER)
-    private Set<Answer> answers;
+    
+//    @OneToMany(mappedBy = "question_id")
+//    private List<Answer> answers=new ArrayList<>();
 
     Boolean isValid;
 

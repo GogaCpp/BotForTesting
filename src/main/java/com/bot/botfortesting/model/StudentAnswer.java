@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,10 +30,10 @@ public class StudentAnswer {
     private long answerId;
 
     @Column(name="time_start")
-    private Date timeStart;
+    private LocalDateTime timeStart;
 
     @Column(name="time_end")
-    private Date timeEnd;
+    private LocalDateTime timeEnd;
 
     @Column(name = "test_id")
     private long testId;

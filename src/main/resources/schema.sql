@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS allData.students_answers(
     student_id BIGINT not null,
     question_id BIGINT not null,
     answer_id BIGINT not null,
-    time_start timestamp,
-    time_end timestamp,
+    time_start timestamp without time zone,
+    time_end timestamp without time zone,
     test_id BIGINT not null
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS allData.teachers(
     university_id BIGINT not null
 );
 /* Гига админ*/
-CREATE TABLE IF NOT EXISTS allData.super_admin(
+CREATE TABLE IF NOT EXISTS allData.super_admins(
     id BIGSERIAL PRIMARY KEY,
     login TEXT UNIQUE,
     pass TEXT
@@ -126,17 +126,63 @@ CREATE TABLE IF NOT EXISTS allData.refresh_tokens(
     login TEXT not null
 );
 
-
-CREATE OR REPLACE Procedure init()
+CREATE OR REPLACE Procedure allData.init()
 AS '
     DECLARE
         n integer;
     BEGIN
-        select * into n from allData.super_admin;
+        select count(*) into n from allData.super_admins;
         IF  n=0  THEN
-            insert into allData.super_admin(login, pass) VALUES (''admin'',''admin'');
+            insert into allData.super_admins(login, pass) VALUES (''admin'',''admin'');
         END IF;
     END;
 ' LANGUAGE plpgsql;
 
-call init();
+create or replace function allData.is_question_valid_by_id(test_id bigint)
+    returns boolean
+as '
+    declare
+        q record;
+        r integer;
+        l integer;
+    begin
+        select * into q from allData.questions ques where ques.id=test_id;
+        select count(*) into r from allData.answers as ans
+        where ans.question_id=test_id and ans.correct=true;
+        select count(*) into l from allData.answers as ans
+        where ans.question_id=test_id and ans.correct=false;
+        if r=0 or l=0 then
+            return false;
+        end if;
+        if q.type=''1'' and r!=1 then
+            return false;
+        end if;
+        return true;
+    end;
+' LANGUAGE plpgsql;
+
+create or replace function allData.is_question_valid()
+    RETURNS TRIGGER
+as '
+    BEGIN
+        IF (TG_OP = ''DELETE'') THEN
+            UPDATE allData.questions as q
+            set is_valid=allData.is_question_valid_by_id(old.question_id)
+            where q.id = old.question_id;
+            RETURN OLD;
+        ELSIF (TG_OP = ''INSERT'') THEN
+            UPDATE allData.questions as q
+            set is_valid=allData.is_question_valid_by_id(new.question_id)
+            where q.id = new.question_id;
+            RETURN NEW;
+        END IF;
+        RETURN NULL;
+    END;
+' LANGUAGE plpgsql;
+
+CREATE or replace TRIGGER is_question_valid_t
+    AFTER INSERT OR DELETE ON allData.answers
+    FOR EACH ROW EXECUTE
+    FUNCTION allData.is_question_valid();
+
+call allData.init();
