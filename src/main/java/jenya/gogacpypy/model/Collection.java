@@ -26,12 +26,11 @@ public class Collection {
     @Column(name="name")
     private String name;
 
-    @JsonIgnoreProperties(value = {"collections"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"collections","groups"}, allowSetters = true)
     @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
+                    CascadeType.MERGE
             })
     @JoinTable(name = "collections_to_questions", schema = "alldata",
             joinColumns = { @JoinColumn(name = "collection_id") },
@@ -43,8 +42,7 @@ public class Collection {
     @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
+                    CascadeType.MERGE
             })
     @JoinTable(name = "disciplines_to_collections", schema = "alldata",
             joinColumns = { @JoinColumn(name = "collection_id") },
@@ -52,7 +50,7 @@ public class Collection {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Discipline> disciplines;
 
-    @JsonIgnoreProperties(value = {"collection"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"collection","questions"}, allowSetters = true)
     @OneToMany(mappedBy = "collection")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Group> groups;

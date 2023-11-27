@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS allData.students_answers(
    student_id BIGINT not null,
    question_id BIGINT not null,
    answer_id BIGINT not null,
-   time_start timestamp,
-   time_end timestamp,
+   time_start timestamp without time zone,
+   time_end timestamp without time zone,
    test_id BIGINT not null
 );
 
@@ -58,14 +58,14 @@ CREATE TABLE IF NOT EXISTS allData.super_admins(
 /*вопросы*/
 CREATE TABLE IF NOT EXISTS allData.questions (
     id BIGSERIAL PRIMARY KEY,
-    question TEXT,
+    name TEXT,
     type TEXT,
     is_valid BOOLEAN
 );
 /* ответы*/
 CREATE TABLE IF NOT EXISTS allData.answers(
       id BIGSERIAL PRIMARY KEY,
-      answer TEXT,
+      name TEXT,
       correct BOOLEAN,
       question_id bigint not null
 );
@@ -153,7 +153,7 @@ begin
     if r=0 or l=0 then
         return false;
     end if;
-    if q.type=''1'' and r!=1 then
+    if q.type=''SingleChoice'' and r!=1 then
         return false;
     end if;
     return true;

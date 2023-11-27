@@ -73,6 +73,7 @@ public class GroupController {
         if (!jwtProvider.checkAccess(token,levelAccess)) {
             return "{\"res\":\"Access denied\"}";
         }
+        System.out.println(groupsToQuestions);
         GroupsToQuestionsRepository.save(groupsToQuestions);
         return "{\"res\":\"Success\"}";
     }

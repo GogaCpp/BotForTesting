@@ -21,7 +21,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="question")
+    @Column(name="name")
     private String name;
 
     @Column(name="type")
@@ -30,12 +30,11 @@ public class Question {
     @Column(name="is_valid")
     private boolean isValid;
 
-    @JsonIgnoreProperties("questions")
+    @JsonIgnoreProperties(value = {"questions","groups"}, allowSetters = true)
     @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
+                    CascadeType.MERGE
             })
     @JoinTable(name = "collections_to_questions", schema = "alldata",
             joinColumns = { @JoinColumn(name = "question_id") },
@@ -43,16 +42,20 @@ public class Question {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Collection> collections;
 
-    @JsonIgnoreProperties("questions")
+    @JsonIgnoreProperties(value = {"questions"}, allowSetters = true)
     @ManyToMany(
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH
+                    CascadeType.MERGE
             })
     @JoinTable(name = "groups_to_questions", schema = "alldata",
             joinColumns = { @JoinColumn(name = "question_id") },
             inverseJoinColumns = { @JoinColumn(name = "group_id") })
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Group> groups;
+
+    @JsonIgnoreProperties(value = {"question"}, allowSetters = true)
+    @OneToMany(mappedBy = "question")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Answer> answers;
 }

@@ -31,7 +31,7 @@ public class Group {
     @JoinColumn(name = "collection_id")
     private Collection collection;
 
-    @JsonIgnoreProperties(value = {"groups"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"groups","collections"}, allowSetters = true)
     @ManyToMany(cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE

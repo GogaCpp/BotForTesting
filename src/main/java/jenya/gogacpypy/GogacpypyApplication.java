@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,29 @@ public class GogacpypyApplication {
 
     private final JWTProvider jwtProvider;
     private final ObjectMapper mapper;
+    private final int levelAccess=1;
+
+    @GetMapping("/names")
+    public String view_names(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+
+        if (!jwtProvider.checkAccess(token,levelAccess)) {
+            return "{\"res\":\"Access denied\"}";
+        }
+        List<SuperAdmin> s = SuperAdminRepository.findAll();
+        List<Admin> a = AdminRepository.findAll();
+        List<Teacher> t = TeacherRepository.findAll();
+        List<String> names = new ArrayList<>();
+        for (SuperAdmin superAdmin : s) {
+            names.add(superAdmin.getLogin());
+        }
+        for (Admin admin : a) {
+            names.add(admin.getLogin());
+        }
+        for (Teacher teacher : t) {
+            names.add(teacher.getLogin());
+        }
+        return mapper.writeValueAsString(names);
+    }
 
     @PostMapping("/login")
     public String login(@RequestBody JWTRequest JWTRequest,
