@@ -24,5 +24,7 @@
 # Работа с ботом
 
 Чтобы активировать тест, к нему надо перейти по ссылке :
-`https://t.me/DubnaTestBot?start={testName}`
-Где `{testName}` - название теста
+`https://t.me/{BotName}?start={testName}`
+
+Где `{testName}` - название теста,
+`{BotName}` - имя бота
